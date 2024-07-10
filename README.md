@@ -1,1 +1,0 @@
-# school-management-project-Frontend-
