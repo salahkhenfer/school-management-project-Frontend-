@@ -1,4 +1,4 @@
-import SmallCard from "../../components/adminsCompnents/navbar/SmallCard";
+import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
 
 function Levels() {
   return (

@@ -3,9 +3,13 @@ import App from "./App";
 import Languages from "./admins/classes/Languages";
 import Courses from "./admins/classes/Courses";
 import Levels from "./admins/classes/Levels";
-import LanguagesLavels from "./components/adminsCompnents/Classes/Languages/LanguagesLavels";
-import LevelYears from "./components/adminsCompnents/Classes/Languages/LevelYears";
 import Groups from "./admins/groups/Groups";
+import LanguagesLavels from "./admins/classes/LanguagesLavels";
+import LevelYears from "./admins/classes/LevelYears";
+import LevelModuls from "./admins/classes/LevelModuls";
+import Group from "./admins/groups/Group";
+import { Login } from "./login/Login";
+import Statistics from "./admins/statistics/Statistics";
 
 const routes = createBrowserRouter([
   {
@@ -13,35 +17,65 @@ const routes = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/courses/Languages",
+        path: "/classes/Languages",
         element: <Languages />,
       },
       {
-        path: "/courses/Languages/:LanguagePrams",
+        path: "/classes/Languages/:LanguagePrams",
         element: <LanguagesLavels />,
       },
       {
-        path: "/courses/Courses",
+        path: "/classes/Languages/:LanguagePrams/:LevelPrams",
+        element: <Groups />,
+      },
+
+      {
+        path: "/classes/Languages/:LanguagePrams/:LevelPrams/:groupParams",
+        element: <Group />,
+      },
+
+      {
+        path: "/classes/Courses",
         element: <Courses />,
       },
       {
-        path: "/courses/Levels",
+        path: "/classes/Courses/:courseParams",
+        element: <Groups />,
+      },
+      {
+        path: "/classes/Courses/:courseParams/:groupParams",
+        element: <Group />,
+      },
+
+      {
+        path: "/classes/Levels",
         element: <Levels />,
       },
       {
-        path: "/courses/Levels/:levelParams",
+        path: "/classes/Levels/:levelParams",
         element: <LevelYears />,
       },
       {
-        path: "/courses/Levels/:levelParams/Groups",
+        path: "/classes/Levels/:levelParams/:modulePrams/Groups",
         element: <Groups />,
       },
+      {
+        path: "/classes/Levels/:levelParams/:modulePrams/Groups/:groupParams",
+        element: <Group />,
+      },
+      {
+        path: "/classes/Levels/:levelParams/:modulePrams",
+        element: <LevelModuls />,
+      },
+      {
+        path: "/statistics",
+        element: <Statistics />,
+      },
     ],
-    // {
-    //   path: "/login",
-    //   element: (
-    //       <App />,
-    //   ),
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 export default routes;

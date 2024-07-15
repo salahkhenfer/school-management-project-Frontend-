@@ -1,12 +1,13 @@
-import React from "react";
-import SmallCard from "../../navbar/SmallCard";
+import { useState } from "react";
+import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
 import { Link, useParams } from "react-router-dom";
-import Education from "../../../../utils/Education.json";
+import Education from "../../utils/Education";
 
-function LevelYears() {
+function LevelModuls() {
+  const { modulePrams } = useParams();
   const { levelParams } = useParams();
-  const level = Education[levelParams];
-  console.log(levelParams);
+  const level = Education[levelParams][modulePrams];
+  console.log(modulePrams);
 
   // Check if level is found in Education
   if (!level) {
@@ -20,10 +21,10 @@ function LevelYears() {
   return (
     <div className="max-w-[1000px] w-full mx-auto">
       <div className="w-full py-10 text-center text-gray-800 text-4xl font-semibold font-['Cairo'] leading-10">
-        الطور التعليمي {levelParams}
+        مواد السنة {modulePrams}
       </div>
       <div className="flex max-w-[1000px] mx-auto justify-center items-center flex-wrap gap-10">
-        {Object.keys(level).map((year, index) => (
+        {level.map((year, index) => (
           <Link to="Groups" key={index}>
             <SmallCard text={year} notNavigate={true} />
           </Link>
@@ -33,4 +34,4 @@ function LevelYears() {
   );
 }
 
-export default LevelYears;
+export default LevelModuls;

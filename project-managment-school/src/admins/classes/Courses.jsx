@@ -1,5 +1,5 @@
 import React from "react";
-import SmallCard from "../../components/adminsCompnents/navbar/SmallCard";
+import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
 
 function Courses() {
   const [addCourses, setAddCourses] = React.useState(false);
@@ -43,8 +43,8 @@ function Courses() {
         </div>
       </div>
       {addCourses && (
-        <div className="w-96   h-80 px-12 py-20 top-[10%] left-[30%]  absolute  bg-gray-200 rounded-3xl justify-start items-center inline-flex">
-          <div className="w-96 self-stretch flex-col justify-start items-end gap-4 inline-flex">
+        <div className="md:w-96 max-md:w-full p-4   h-fit md:px-12 z-30 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0  absolute  bg-gray-200 rounded-3xl justify-start items-center inline-flex">
+          <div className=" max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
             <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
               إضافة دورة
             </div>

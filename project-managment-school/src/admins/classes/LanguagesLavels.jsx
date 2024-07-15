@@ -1,4 +1,4 @@
-import SmallCard from "../../navbar/SmallCard";
+import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
 
 export default function LanguagesLavels() {
   return (
@@ -7,8 +7,8 @@ export default function LanguagesLavels() {
         <div className="w-fith-28 py-10 text-center  text-gray-800 text-4xl font-semibold font-['Cairo'] leading-10">
           االأطوار التعليمية
         </div>
-        <div className="flex max-w-[1000px] mx-auto justify-center items-end flex-wrap gap-10">
-          <div className="flex flex-col justify-end gap-5">
+        <div className="flex max-md:flex-col max-md:justify-center max-md:items-center m max-w-[1000px] mx-auto justify-center items-end flex-wrap gap-10">
+          <div className="flex flex-col items-center md:justify-end gap-5">
             <SmallCard text="Pre A1" />
             <SmallCard text="A1" />
             <SmallCard text="A2" />

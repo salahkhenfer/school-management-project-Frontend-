@@ -1,22 +1,46 @@
 import { IoNotificationsOutline } from "react-icons/io5";
 import logo from "../../../../public/logo.png";
-import { BiMessageDetail } from "react-icons/bi";
+import { BiMenu, BiMessageDetail } from "react-icons/bi";
 import {
   Avatar,
   AvatarIcon,
+  Badge,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { useState } from "react";
 
-function Header() {
+function Header({ isOpen, setIsOpen }) {
+  // eslint-disable-next-line no-unused-vars
+  const [isInvisible, setIsInvisible] = useState(false);
+
   return (
-    <div className=" flex justify-between absolute  bg-white px-10  items-center w-full h-fit">
+    <div className=" flex justify-between absolute z-50  bg-white md:px-10  px-2  items-center w-full h-fit">
+      <div onClick={setIsOpen} className="   md:hidden  ">
+        <BiMenu className="w-10 h-10" />
+      </div>
       <img className="w-14 h-14" src={logo} alt="" />
-      <div className="flex justify-center gap-6 items-center">
-        <BiMessageDetail className="w-6 h-6 cursor-pointer " />
-        <IoNotificationsOutline className="w-6 h-6 cursor-pointer " />
+      <div className="  flex justify-center md:gap-6 items-center">
+        <Badge
+          color="danger"
+          className="max-md:hidden"
+          content={2}
+          isInvisible={isInvisible}
+          shape="circle"
+        >
+          <BiMessageDetail className="w-6 max-md:hidden h-6 cursor-pointer " />
+        </Badge>
+        <Badge
+          className="max-md:hidden"
+          color="danger"
+          content={5}
+          isInvisible={isInvisible}
+          shape="circle"
+        >
+          <IoNotificationsOutline className="w-6 max-md:hidden h-6 cursor-pointer " />
+        </Badge>
         <div className="flex items-center">
           <Dropdown placement="bottom-end">
             <DropdownTrigger>

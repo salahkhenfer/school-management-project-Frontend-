@@ -20,3 +20,7 @@
 .loading-image {
   animation: spin 2s linear infinite;
 }
+.ltrDiraction {
+  direction: ltr !important;
+  text-align: right !important;
+}
