@@ -11,10 +11,19 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { LogoutApi } from "../../../apiCalls/authCalls";
+import { checkauth, logout } from "../../../Redux/slices/authSlice";
 
 function Header({ isOpen, setIsOpen }) {
   // eslint-disable-next-line no-unused-vars
   const [isInvisible, setIsInvisible] = useState(false);
+  const dispatch = useDispatch();
+  const handelLogout = async () => {
+    LogoutApi();
+    await dispatch(logout());
+    dispatch(checkauth());
+  };
 
   return (
     <div className=" flex justify-between absolute z-50  bg-white md:px-10  px-2  items-center w-full h-fit">
@@ -60,7 +69,7 @@ function Header({ isOpen, setIsOpen }) {
                 <p className="font-semibold">محمد</p>
               </DropdownItem>
               <DropdownItem key="settings">الصفحة الرئيسة</DropdownItem>
-              <DropdownItem key="logout" color="danger">
+              <DropdownItem onClick={handelLogout} key="logout" color="danger">
                 تسجيل الخروج
               </DropdownItem>
             </DropdownMenu>

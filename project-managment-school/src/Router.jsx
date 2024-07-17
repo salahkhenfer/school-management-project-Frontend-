@@ -20,6 +20,7 @@ const routes = createBrowserRouter([
         path: "/classes/Languages",
         element: <Languages />,
       },
+
       {
         path: "/classes/Languages/:LanguagePrams",
         element: <LanguagesLavels />,
@@ -68,7 +69,8 @@ const routes = createBrowserRouter([
         element: <LevelModuls />,
       },
       {
-        path: "/statistics",
+        index: true,
+
         element: <Statistics />,
       },
     ],

@@ -1,14 +1,91 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
+import LoadingFirstPage from "../../components/loading/LoadingFirstPage";
+import {
+  addLanguageApi,
+  deleteLanguageApi,
+  getAllLanguages,
+} from "../../apiCalls/languagesCalls";
+import Swal from "sweetalert2";
 
 function Languages() {
   const [addLanguage, setAddLanguage] = useState(false);
-  const handelAdd = () => {
-    setAddLanguage(false);
+  const [Languages, setLanguages] = useState([]);
+  const [loding, setLoding] = useState(false);
+  const [language, setLanguage] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [newLanguage, setNewLanguage] = useState("");
+
+  const handleAdd = async () => {
+    if (language.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "خطأ",
+        text: "الرجاء إدخال لغة قبل الإضافة",
+        showConfirmButton: true,
+      });
+      return;
+    }
+    const addedLanguage = await addLanguageApi(language);
+    if (addedLanguage) {
+      setLanguages([...Languages, addedLanguage]);
+      Swal.fire({
+        icon: "success",
+        title: "تمت الإضافة بنجاح",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      setLanguage("");
+      setAddLanguage(true);
+    }
   };
   const handelCancel = () => {
     setAddLanguage(false);
   };
+  const handleDelete = async (id) => {
+    console.log(id);
+    await Swal.fire({
+      title: "هل أنت متأكد من حذف هذا العنصر؟",
+      text: "لن يمكنك التراجع عن هذا الإجراء",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "نعم, احذفه!",
+      cancelButtonText: "إلغاء",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const result = await deleteLanguageApi(id);
+        console.log(result);
+        if (result) {
+          Swal.fire("تم الحذف!", "تم حذف العنصر بنجاح", "success");
+          setLanguages(Languages.filter((language) => language.id !== id));
+        } else {
+          Swal.fire("فشل الحذف!", "حدث خطأ أثناء الحذف", "error");
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    const getAllLanguage = async () => {
+      setLoding(true);
+      try {
+        const Languages = await getAllLanguages();
+        console.log(Languages);
+        setLanguages(Languages);
+      } catch (err) {
+        console.error("Failed to fetch languages:", err);
+      } finally {
+        setLoding(false);
+      }
+    };
+
+    getAllLanguage();
+  }, []);
+  if (loding) {
+    return <LoadingFirstPage />;
+  }
   return (
     <div
       className={`max-w-[1000px] duration-200 relative  w-full mx-auto ${
@@ -25,8 +102,14 @@ function Languages() {
         style={addLanguage ? { filter: "blur(2px)" } : {}}
         className=" flex w-full justify-center items-center flex-wrap gap-10"
       >
-        <SmallCard text="اللغة العربية" />
-        <SmallCard text="اللغة العربية" />
+        {Languages?.map((language) => (
+          <SmallCard
+            key={language.id}
+            id={language.id}
+            text={language.name}
+            handleDelete={handleDelete}
+          />
+        ))}
       </div>
       <div
         style={addLanguage ? { filter: "blur(2px)" } : {}}
@@ -42,15 +125,18 @@ function Languages() {
         </div>
       </div>
       {addLanguage && (
-        <div className="md:w-96 max-md:w-full p-4   h-fit md:px-12 z-30 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0  absolute  bg-gray-200 rounded-3xl justify-start items-center inline-flex">
+        <div className="md:w-fit max-md:w-full p-4   h-fit md:px-12 z-30 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0  absolute  bg-gray-200 rounded-3xl justify-start items-center inline-flex">
           <div className=" max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
             <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
               إضافة لغة
             </div>
-            <input className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2" />
+            <input
+              onChange={(e) => setLanguage(e.target.value)}
+              className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2"
+            />
 
             <div
-              onClick={handelAdd}
+              onClick={handleAdd}
               className="self-stretch cursor-pointer px-8 py-2 bg-indigo-500 rounded-2xl justify-center items-center gap-2 inline-flex"
             >
               <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">

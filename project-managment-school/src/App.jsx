@@ -3,24 +3,41 @@ import "./App.css";
 import LoadingFirstPage from "./components/loading/LoadingFirstPage";
 import SideBar from "./components/adminsCompnents/navbar/SideBar";
 import Header from "./components/adminsCompnents/navbar/Header";
-import { Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { checkauth, selectAuth } from "./Redux/slices/authSlice";
+import { checkauthApi } from "./apiCalls/authCalls";
 
 function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useSelector(selectAuth);
+  const [loading, setLoading] = useState();
+  const dispatch = useDispatch();
+  const nav = useNavigate();
   useEffect(() => {
-    document.fonts.ready.then(() => {
-      setFontLoaded(true);
-    });
+    const fetchAuthStatus = async () => {
+      setLoading(true);
+      try {
+        const userData = await checkauthApi();
+        console.log(userData.user);
+        dispatch(checkauth(userData.user));
+      } catch (err) {
+        console.error("Error checking authentication status:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthStatus();
   }, []);
 
-  if (fontLoaded) {
+  if (fontLoaded || user) {
     return (
       <div className="font-cairo">
         <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />
         <div className="flex">
-          <SideBar isOpen={isOpen} />
+          <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
           <div
             className="pt-20 
           h-[calc(100vh-1rem)]
@@ -31,6 +48,8 @@ function App() {
         </div>
       </div>
     );
+  } else if (!user) {
+    return <Navigate to="/login" />;
   } else {
     return <LoadingFirstPage />;
   }

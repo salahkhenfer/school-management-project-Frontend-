@@ -1,7 +1,6 @@
-import { BiMenu } from "react-icons/bi";
 import { Link } from "react-router-dom";
 
-function SideBar({ isOpen }) {
+function SideBar({ isOpen, setIsOpen }) {
   return (
     <div
       className={`w-80 
@@ -12,7 +11,8 @@ function SideBar({ isOpen }) {
       <div className="w-full flex flex-col">
         <Link
           style={{ textDecoration: "none", width: "100%" }}
-          to="/statistics"
+          onClick={() => setIsOpen(false)}
+          to="/"
           className="px-4 w-full rounded-lg hover:bg-gray-200 cursor-pointer"
         >
           الاحصائيات{" "}
@@ -21,6 +21,7 @@ function SideBar({ isOpen }) {
       <div className="flex flex-col">
         <div className="font-bold  py-2 ">الاقسام والدورات</div>
         <Link
+          onClick={() => setIsOpen(false)}
           style={{ textDecoration: "none", width: "100%" }}
           to="classes/Languages"
           className="px-4 rounded-lg hover:bg-gray-200 cursor-pointer"
@@ -28,6 +29,7 @@ function SideBar({ isOpen }) {
           الغات{" "}
         </Link>
         <Link
+          onClick={() => setIsOpen(false)}
           to="classes/Courses"
           className="px-4  rounded-lg hover:bg-gray-200 cursor-pointer"
         >
@@ -35,6 +37,7 @@ function SideBar({ isOpen }) {
           الدورات{" "}
         </Link>
         <Link
+          onClick={() => setIsOpen(false)}
           style={{ textDecoration: "none", width: "100%" }}
           to="classes/Levels"
           className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
@@ -45,14 +48,23 @@ function SideBar({ isOpen }) {
       </div>
       <div>
         <div className="font-bold  py-2 "> المستخدمين واالإضافات</div>
-        <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <div
+          onClick={() => setIsOpen(false)}
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
           التالميذ{" "}
         </div>
-        <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <div
+          onClick={() => setIsOpen(false)}
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
           {" "}
           االساتذة{" "}
         </div>
-        <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <div
+          onClick={() => setIsOpen(false)}
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
           {" "}
           اولياء التالميذ{" "}
         </div>
