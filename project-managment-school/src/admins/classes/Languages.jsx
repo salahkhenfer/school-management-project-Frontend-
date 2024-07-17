@@ -26,19 +26,37 @@ function Languages() {
       });
       return;
     }
-    const addedLanguage = await addLanguageApi(language);
-    if (addedLanguage) {
-      setLanguages([...Languages, addedLanguage]);
+
+    try {
+      const addedLanguage = await addLanguageApi(language);
+      if (addedLanguage) {
+        setLanguages((prevLanguages) => [...prevLanguages, language]);
+        Swal.fire({
+          icon: "success",
+          title: "تمت الإضافة بنجاح",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setLanguage("");
+        setAddLanguage(false);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "خطأ",
+          text: "تعذر إضافة اللغة. الرجاء المحاولة مرة أخرى.",
+          showConfirmButton: true,
+        });
+      }
+    } catch (error) {
       Swal.fire({
-        icon: "success",
-        title: "تمت الإضافة بنجاح",
-        showConfirmButton: false,
-        timer: 1500,
+        icon: "error",
+        title: "خطأ",
+        text: "حدث خطأ أثناء الإضافة. الرجاء المحاولة مرة أخرى.",
+        showConfirmButton: true,
       });
-      setLanguage("");
-      setAddLanguage(true);
     }
   };
+
   const handelCancel = () => {
     setAddLanguage(false);
   };

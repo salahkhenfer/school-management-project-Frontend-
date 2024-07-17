@@ -47,9 +47,7 @@ export function Login() {
 
   if (loading) {
     return <LoadingFirstPage />;
-  } else if (user) {
-    return <Navigate to="/" />;
-  } else {
+  } else if (!user) {
     return (
       <div className="w-full h-screen bg-slate-500">
         <img src={logo} className="w-28 mx-auto h-28 object-cover" alt="Logo" />
@@ -83,5 +81,7 @@ export function Login() {
         </Card>
       </div>
     );
+  } else {
+    return <Navigate to="/" />;
   }
 }
