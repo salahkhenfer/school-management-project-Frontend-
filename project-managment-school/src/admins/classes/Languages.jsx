@@ -11,10 +11,9 @@ import Swal from "sweetalert2";
 function Languages() {
   const [addLanguage, setAddLanguage] = useState(false);
   const [Languages, setLanguages] = useState([]);
-  const [loding, setLoding] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [language, setLanguage] = useState("");
   const [isAdding, setIsAdding] = useState(false);
-  const [newLanguage, setNewLanguage] = useState("");
 
   const handleAdd = async () => {
     if (language.trim() === "") {
@@ -27,11 +26,15 @@ function Languages() {
       return;
     }
 
+    setIsAdding(true);
+
     try {
       const addedLanguage = await addLanguageApi(language);
+      console.log(addedLanguage);
       if (addedLanguage) {
-        setLanguages((prevLanguages) => [...prevLanguages, language]);
-        Swal.fire({
+        getAllLanguage();
+
+        await Swal.fire({
           icon: "success",
           title: "تمت الإضافة بنجاح",
           showConfirmButton: false,
@@ -54,12 +57,15 @@ function Languages() {
         text: "حدث خطأ أثناء الإضافة. الرجاء المحاولة مرة أخرى.",
         showConfirmButton: true,
       });
+    } finally {
+      setIsAdding(false);
     }
   };
 
   const handelCancel = () => {
     setAddLanguage(false);
   };
+
   const handleDelete = async (id) => {
     console.log(id);
     await Swal.fire({
@@ -73,40 +79,40 @@ function Languages() {
       cancelButtonText: "إلغاء",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const result = await deleteLanguageApi(id);
-        console.log(result);
-        if (result) {
+        const deleteResult = await deleteLanguageApi(id);
+        if (deleteResult) {
           Swal.fire("تم الحذف!", "تم حذف العنصر بنجاح", "success");
-          setLanguages(Languages.filter((language) => language.id !== id));
+          setLanguages((prevLanguages) =>
+            prevLanguages.filter((language) => language.id !== id)
+          );
         } else {
           Swal.fire("فشل الحذف!", "حدث خطأ أثناء الحذف", "error");
         }
       }
     });
   };
-
+  const getAllLanguage = async () => {
+    setLoading(true);
+    try {
+      const languages = await getAllLanguages();
+      setLanguages(languages);
+    } catch (err) {
+      console.error("Failed to fetch languages:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const getAllLanguage = async () => {
-      setLoding(true);
-      try {
-        const Languages = await getAllLanguages();
-        console.log(Languages);
-        setLanguages(Languages);
-      } catch (err) {
-        console.error("Failed to fetch languages:", err);
-      } finally {
-        setLoding(false);
-      }
-    };
-
     getAllLanguage();
   }, []);
-  if (loding) {
+
+  if (loading) {
     return <LoadingFirstPage />;
   }
+
   return (
     <div
-      className={`max-w-[1000px] duration-200 relative  w-full mx-auto ${
+      className={`max-w-[1000px] duration-200 relative w-full mx-auto ${
         addLanguage ? " bg-opacity-30" : ""
       }`}
     >
@@ -118,9 +124,9 @@ function Languages() {
       </div>
       <div
         style={addLanguage ? { filter: "blur(2px)" } : {}}
-        className=" flex w-full justify-center items-center flex-wrap gap-10"
+        className="flex w-full justify-center items-center flex-wrap gap-10"
       >
-        {Languages?.map((language) => (
+        {Languages.map((language) => (
           <SmallCard
             key={language.id}
             id={language.id}
@@ -143,22 +149,22 @@ function Languages() {
         </div>
       </div>
       {addLanguage && (
-        <div className="md:w-fit max-md:w-full p-4   h-fit md:px-12 z-30 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0  absolute  bg-gray-200 rounded-3xl justify-start items-center inline-flex">
-          <div className=" max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
+        <div className="md:w-fit max-md:w-full p-4 h-fit md:px-12 z-30 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0 absolute bg-gray-200 rounded-3xl justify-start items-center inline-flex">
+          <div className="max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
             <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
               إضافة لغة
             </div>
             <input
+              value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2"
+              className="w-full focus:outline-none px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2"
             />
-
             <div
               onClick={handleAdd}
               className="self-stretch cursor-pointer px-8 py-2 bg-indigo-500 rounded-2xl justify-center items-center gap-2 inline-flex"
             >
               <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">
-                اضافة{" "}
+                اضافة
               </div>
             </div>
             <div
