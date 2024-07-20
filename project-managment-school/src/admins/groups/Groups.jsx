@@ -9,53 +9,29 @@ import {
   getKeyValue,
   Select,
   SelectItem,
+  cn,
+  Button,
+} from "@nextui-org/react";
+import * as Yup from "yup";
+
+import { Form, useLocation, useNavigate } from "react-router-dom";
+import { getGroups } from "../../apiCalls/GroupsCals";
+import { ErrorMessage, Field, Formik, useFormik } from "formik";
+import { format, parseISO } from "date-fns";
+import {
   Input,
   DatePicker,
   Autocomplete,
   AutocompleteItem,
   RadioGroup,
-  cn,
   Radio,
-} from "@nextui-org/react";
-import * as Yup from "yup";
-
-import { useLocation, useNavigate } from "react-router-dom";
-import { getGroups } from "../../apiCalls/GroupsCals";
-import { useFormik } from "formik";
-import { format, parseISO } from "date-fns";
+} from "@nextui-org/react"; // Adjust imports based on your setup
 
 function Groups() {
   const nav = useNavigate();
   const [list, setList] = useState([]);
   const pathname = useLocation().pathname;
-  const initialValues = {
-    groupName: "",
-    startDate: "",
-    endDate: "",
-    studentCount: "",
-    teacher: "",
-    paymentMethod: "",
-  };
 
-  const validationSchema = Yup.object({
-    groupName: Yup.string().required("اسم الفوج مطلوب"),
-    startDate: Yup.date().required("تاريخ البدأ مطلوب"),
-    endDate: Yup.date().required("تاريخ الانتهاء مطلوب"),
-    studentCount: Yup.number()
-      .required("عدد التلاميذ في الفوج مطلوب")
-      .positive("يجب أن يكون رقماً إيجابياً"),
-    teacher: Yup.string().required("ابحث عن استاذ مطلوب"),
-    paymentMethod: Yup.string().required("اختر طريقة الدفع مطلوب"),
-  });
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: (values) => {
-      // Convert date strings to actual Date objects or desired format
-      console.log(values);
-      handelAdd();
-    },
-  });
   const data = [
     { label: "محمد العربي", value: 1 },
     { label: "علي العربي", value: 2 },
@@ -74,7 +50,12 @@ function Groups() {
   }, []);
 
   const [addGroup, setAddGroup] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
+  const handlePaymentMethodChange = (event) => {
+    console.log(event.target.value);
+    setSelectedPaymentMethod(event.target.value);
+  };
   const handelAdd = () => {
     setAddGroup(false);
   };
@@ -84,6 +65,40 @@ function Groups() {
   const handelclickGroup = () => {
     nav("group");
   };
+  const initialValues = {
+    groupName: "",
+    startDate: "",
+    endDate: "",
+    studentCount: "",
+    teacher: "",
+    paymentMethod: "",
+    paymentPerSession: "",
+    paymentPercentage: "",
+    price: "",
+    numberOfSessions: "",
+  };
+
+  const validationSchema = Yup.object({
+    groupName: Yup.string().required("اسم الفوج مطلوب"),
+    startDate: Yup.date().required("تاريخ البدأ مطلوب"),
+    endDate: Yup.date().required("تاريخ الانتهاء مطلوب"),
+    studentCount: Yup.number()
+      .required("عدد التلاميذ في الفوج مطلوب")
+      .positive("يجب أن يكون رقماً إيجابياً"),
+    teacher: Yup.string().required("ابحث عن استاذ مطلوب"),
+    paymentMethod: Yup.string().required("اختر طريقة الدفع مطلوب"),
+    paymentPerSession: Yup.number()
+      .required("سعر الحصة مطلوب")
+      .positive("يجب أن يكون رقماً إيجابياً"),
+
+    paymentPercentage: Yup.number()
+      .required("نسبة الدفع مطلوب")
+      .min(0, "Minimum value is 0")
+      .max(100, "Maximum value is 100"),
+
+    price: Yup.number(),
+    numberOfSessions: Yup.number().required("عدد الحصص مطلوب"),
+  });
 
   return (
     <div className="p-5 relative ">
@@ -160,135 +175,280 @@ function Groups() {
         </div>
       </div>
       {addGroup && (
-        <div className="md:w-96 max-md:w-full h-fit md:px-12 z-50 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0 absolute bg-gray-200 rounded-3xl justify-start items-center inline-flex">
-          <form
-            onSubmit={formik.handleSubmit}
-            className="max-md:w-full p-4 self-stretch flex-col justify-start items-end gap-4 inline-flex"
+        <div className="md:w-[70%]  max-md:w-full h-fit md:px-12 z-50 md:py-2 md:top-[5%] md:left-[10%] top-0 left-0 absolute bg-gray-200 rounded-3xl flex flex-col p-4">
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={(values, { resetForm }) => {
+              // Handle form submission
+              console.log(values);
+
+              // Reset form after submission if needed
+              resetForm();
+            }}
           >
-            <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
-              إضافة فوج
-            </div>
-            <div className="flex w-full flex-col flex-wrap md:flex-nowrap gap-4">
-              <Input
-                type="text"
-                label="اسم الفوج"
-                name="groupName"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.groupName}
-                error={
-                  formik.touched.groupName && formik.errors.groupName
-                    ? formik.errors.groupName
-                    : null
-                }
-              />
-              <DatePicker
-                label="تاريخ البدأ"
-                name="startDate"
-                error={
-                  formik.touched.startDate && formik.errors.startDate
-                    ? formik.errors.startDate
-                    : null
-                }
-                variant="flat"
-              />
-              <DatePicker
-                label="تاريخ الانتهاء"
-                name="endDate"
-                error={
-                  formik.touched.endDate && formik.errors.endDate
-                    ? formik.errors.endDate
-                    : null
-                }
-                variant="flat"
-              />
-              <Input
-                type="text"
-                label="عدد التلاميذ في الفوج"
-                name="studentCount"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.studentCount}
-                error={
-                  formik.touched.studentCount && formik.errors.studentCount
-                    ? formik.errors.studentCount
-                    : null
-                }
-              />
-              <Autocomplete
-                size="sm"
-                label="ابحث عن استاذ"
-                defaultItems={data}
-                className="max-w-xs"
-                onSelect={(item) => formik.setFieldValue("teacher", item.value)}
-                error={
-                  formik.touched.teacher && formik.errors.teacher
-                    ? formik.errors.teacher
-                    : null
-                }
-              >
-                {(item) => (
-                  <AutocompleteItem key={item.value}>
-                    {item.label}
-                  </AutocompleteItem>
-                )}
-              </Autocomplete>
-              <RadioGroup
-                classNames={{ base: cn("flex w-full gap-4") }}
-                label="اختر طريقة الدفع"
-                name="paymentMethod"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.paymentMethod}
-                error={
-                  formik.touched.paymentMethod && formik.errors.paymentMethod
-                    ? formik.errors.paymentMethod
-                    : null
-                }
-              >
-                <div className="flex gap-2">
-                  <Radio
-                    value="1"
-                    classNames={{
-                      base: cn(
-                        "m-0 bg-content1 w-fit hover:bg-content2 items-center justify-between flex-row-reverse max-w-[300px] cursor-pointer rounded-lg p-2 gap-2 border-2 border-transparent data-[selected=true]:border-primary"
-                      ),
+            {({
+              handleChange,
+              handleBlur,
+              values,
+              setFieldValue,
+              handleSubmit,
+            }) => (
+              <Form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                <div className="text-center text-gray-800 text-3xl font-semibold leading-10">
+                  إضافة فوج
+                </div>
+
+                <Field
+                  name="groupName"
+                  type="text"
+                  as={Input}
+                  label="اسم الفوج"
+                  aria-label=" اسم الفوج"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.groupName}
+                />
+                <ErrorMessage
+                  name="groupName"
+                  component="div"
+                  className="text-red-500"
+                />
+                <div className="flex gap-4 justify-between items-center w-full">
+                  <div className="w-full">
+                    <Field name="startDate">
+                      {({ field }) => (
+                        <DatePicker
+                          label="تاريخ البدأ"
+                          aria-label="تاريخ البدأ"
+                          selected={field.value}
+                          onChange={(date) => setFieldValue("startDate", date)}
+                        />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="startDate"
+                      component="div"
+                      className="text-red-500"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field name="endDate">
+                      {({ field }) => (
+                        <DatePicker
+                          label="تاريخ الانتهاء"
+                          aria-label="تاريخ الانتهاء"
+                          selected={field.value}
+                          onChange={(date) => setFieldValue("endDate", date)}
+                        />
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="endDate"
+                      component="div"
+                      className="text-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 justify-between items-center w-full">
+                  <div className="w-full">
+                    <Field
+                      name="studentCount"
+                      as={Input}
+                      type="number"
+                      label="عدد التلاميذ في الفوج"
+                      aria-label="عدد التلاميذ في الفوج"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.studentCount}
+                    />
+                    <ErrorMessage
+                      name="studentCount"
+                      component="div"
+                      className="text-red-500"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field
+                      name="numberOfSessions"
+                      as={Input}
+                      type="number"
+                      label="   عدد الحصص"
+                      aria-label="عدد الحصص"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.numberOfSessions}
+                    />
+                    <ErrorMessage
+                      name="numberOfSessions"
+                      component="div"
+                      className="text-red-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 justify-between items-center w-full">
+                  <Field
+                    className="w-full"
+                    name="price"
+                    as={Input}
+                    type="Price"
+                    label=" السعر  التلميذ"
+                    aria-label=" السعر الاجمالي للحصة"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.price}
+                    endContent={
+                      <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">DZD</span>
+                      </div>
+                    }
+                  />
+                  <ErrorMessage
+                    name="price"
+                    component="div"
+                    className="text-red-500"
+                  />
+
+                  <Field name="teacher">
+                    {({ field }) => (
+                      <Autocomplete
+                        size="sm"
+                        label="ابحث عن استاذ"
+                        aria-label="ابحث عن استاذ"
+                        defaultItems={data}
+                        className="max-w-xs"
+                        onChange={(value) => setFieldValue("teacher", value)}
+                        value={values.teacher}
+                      >
+                        {(item) => (
+                          <AutocompleteItem
+                            key={item.value}
+                            onClick={() => setFieldValue("teacher", item.label)}
+                            value={item.value}
+                          >
+                            {item.label}
+                          </AutocompleteItem>
+                        )}
+                      </Autocomplete>
+                    )}
+                  </Field>
+                  <ErrorMessage
+                    name="teacher"
+                    component="div"
+                    className="text-red-500"
+                  />
+                </div>
+                <div className="flex gap-4 justify-between items-center w-full">
+                  <RadioGroup
+                    className="flex w-full gap-4"
+                    label="اختر طريقة الدفع"
+                    as={RadioGroup}
+                    name="paymentMethod"
+                    value={values.paymentMethod}
+                    onChange={(e) => {
+                      handleChange(e);
                     }}
+                    onBlur={handleBlur}
                   >
-                    دفع بالحصة
-                  </Radio>
-                  <Radio
-                    value="2"
-                    classNames={{
-                      base: cn(
-                        "m-0 bg-content1 w-fit hover:bg-content2 items-center justify-between flex-row-reverse max-w-[300px] cursor-pointer rounded-lg p-2 gap-2 border-2 border-transparent data-[selected=true]:border-primary"
-                      ),
-                    }}
+                    <div className="flex gap-2">
+                      <Field
+                        type="radio"
+                        name="paymentMethod"
+                        value="1"
+                        as={Radio}
+                        onChange={(e) => {
+                          handleChange(e);
+                          handlePaymentMethodChange(e);
+                        }}
+                        className="cursor-pointer rounded-lg p-2 border-2 border-transparent"
+                      >
+                        دفع بالحصة
+                      </Field>
+                      <Field
+                        type="radio"
+                        name="paymentMethod"
+                        value="2"
+                        onChange={(e) => {
+                          handleChange(e);
+                          handlePaymentMethodChange(e);
+                        }}
+                        as={Radio}
+                        className="cursor-pointer rounded-lg p-2 border-2 border-transparent"
+                      >
+                        دفع بالنسبة
+                      </Field>
+                    </div>
+                  </RadioGroup>
+                  <ErrorMessage
+                    name="paymentMethod"
+                    component="div"
+                    className="text-red-500"
+                  />
+
+                  {selectedPaymentMethod === "1" && (
+                    <Field
+                      className="w-full"
+                      name="paymentPerSession"
+                      as={Input}
+                      type="Price"
+                      label="سعر الحصة"
+                      aria-label="سعر الحصة"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.paymentPerSession}
+                      endContent={
+                        <div className="pointer-events-none flex items-center">
+                          <span className="text-default-400 text-small">
+                            DZD
+                          </span>
+                        </div>
+                      }
+                    />
+                  )}
+                  {selectedPaymentMethod === "2" && (
+                    <Field
+                      className="w-full"
+                      name="paymentPercentage"
+                      as={Input}
+                      type="number"
+                      label="نسبة الدفع"
+                      aria-label="نسبة الدفع"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.paymentPercentage}
+                      min={0}
+                      max={100}
+                      endContent={
+                        <div className="pointer-events-none flex items-center">
+                          <span className="text-default-600 text-xl font-bold">
+                            %
+                          </span>
+                        </div>
+                      }
+                    />
+                  )}
+                </div>
+
+                <div className="flex w-full gap-2 justify-between items-center">
+                  <Button
+                    type="submit"
+                    className="w-full text-center text-white text-base font-semibold bg-indigo-500 rounded-2xl px-8 py-2"
                   >
-                    دفع بالشهر
-                  </Radio>
+                    اضافة
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={handelCancel}
+                    className="w-full text-center text-white text-base font-semibold bg-red-600 rounded-2xl px-8 py-2"
+                  >
+                    الغاء
+                  </button>
                 </div>
-              </RadioGroup>
-            </div>
-            <div className="flex w-full gap-2 justify-between items-center">
-              <button
-                type="submit"
-                className="w-full text-center cursor-pointer px-8 py-2 bg-indigo-500 rounded-2xl justify-center items-center gap-2"
-              >
-                <div className="text-center text-white text-base font-semibold font-['Cairo'] leading-normal">
-                  اضافة
-                </div>
-              </button>
-              <div
-                onClick={handelCancel}
-                className="cursor-pointer w-full px-8 py-2 bg-red-600 rounded-2xl justify-center items-center gap-2"
-              >
-                <div className="text-center text-white text-base font-semibold font-['Cairo'] leading-normal">
-                  الغاء
-                </div>
-              </div>
-            </div>
-          </form>
+              </Form>
+            )}
+          </Formik>
         </div>
       )}
     </div>
