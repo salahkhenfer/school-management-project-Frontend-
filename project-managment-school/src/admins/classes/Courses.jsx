@@ -1,8 +1,11 @@
 import React from "react";
 import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
+import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 
 function Courses() {
   const [addCourses, setAddCourses] = React.useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const handelAdd = () => {
     setAddCourses(false);
   };
@@ -33,42 +36,51 @@ function Courses() {
         style={addCourses ? { filter: "blur(2px)" } : {}}
         className="w-full flex justify-center items-center my-10"
       >
-        <div
-          onClick={() => setAddCourses(!addCourses)}
+        <Button
+          onPress={onOpen}
           className="w-96 h-16 px-8 py-4 hover:bg-blue-600 cursor-pointer bg-indigo-500 rounded-2xl flex justify-center items-center gap-2"
         >
           <div className="text-right text-white text-2xl font-semibold font-['Cairo'] leading-9">
             اضافة دورة
           </div>
-        </div>
+        </Button>
       </div>
-      {addCourses && (
-        <div className="md:w-96 max-md:w-full p-4   h-fit md:px-12 z-30 md:py-2 md:top-[5%] md:left-[30%] top-0 left-0  absolute  bg-gray-200 rounded-3xl justify-start items-center inline-flex">
-          <div className=" max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
-            <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
-              إضافة دورة
-            </div>
-            <input className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2" />
 
-            <div
-              onClick={handelAdd}
-              className="self-stretch cursor-pointer px-8 py-2 bg-indigo-500 rounded-2xl justify-center items-center gap-2 inline-flex"
-            >
-              <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">
-                اضافة{" "}
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        scrollBehavior="inside"
+      >
+        <ModalContent className="w-fit">
+          {(onClose) => (
+            <div className="md:w-96 max-md:w-full p-4   h-fit md:px-12  md:py-2   bg-gray-200 rounded-3xl justify-start items-center inline-flex">
+              <div className=" max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
+                <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
+                  إضافة دورة
+                </div>
+                <input className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2" />
+
+                <div
+                  onClick={handelAdd}
+                  className="self-stretch cursor-pointer px-8 py-2 bg-indigo-500 rounded-2xl justify-center items-center gap-2 inline-flex"
+                >
+                  <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">
+                    اضافة{" "}
+                  </div>
+                </div>
+                <div
+                  onClick={handelCancel}
+                  className="self-stretch cursor-pointer px-8 py-2 bg-red-600 rounded-2xl justify-center items-center gap-2 inline-flex"
+                >
+                  <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">
+                    الغاء
+                  </div>
+                </div>
               </div>
             </div>
-            <div
-              onClick={handelCancel}
-              className="self-stretch cursor-pointer px-8 py-2 bg-red-600 rounded-2xl justify-center items-center gap-2 inline-flex"
-            >
-              <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">
-                الغاء
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

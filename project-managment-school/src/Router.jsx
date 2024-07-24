@@ -10,6 +10,8 @@ import LevelModuls from "./admins/classes/LevelModuls";
 import Group from "./admins/groups/Group";
 import { Login } from "./login/Login";
 import Statistics from "./admins/statistics/Statistics";
+import AdditionalWebSite from "./admins/controlWebsite/AdditionalWebSite";
+import RegimentControl from "./admins/controlWebsite/RegimentControl";
 
 const routes = createBrowserRouter([
   {
@@ -72,6 +74,16 @@ const routes = createBrowserRouter([
         index: true,
 
         element: <Statistics />,
+      },
+      {
+        path: "/additionalWebSite",
+
+        element: <AdditionalWebSite />,
+      },
+      {
+        path: "/additionalWebSite/:additionalWebSitePrams",
+
+        element: <RegimentControl />,
       },
     ],
   },

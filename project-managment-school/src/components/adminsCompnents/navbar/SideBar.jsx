@@ -84,6 +84,12 @@ function SideBar({ isOpen, setIsOpen }) {
         <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
           تحديد الصلاحيات
         </div>
+        <Link
+          to="/additionalWebSite"
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
+          اضافات الموقع
+        </Link>
       </div>
     </div>
   );
