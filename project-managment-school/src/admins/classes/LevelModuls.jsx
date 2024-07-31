@@ -25,7 +25,7 @@ function LevelModuls() {
       </div>
       <div className="flex max-w-[1000px] mx-auto justify-center items-center flex-wrap gap-10">
         {level.map((year, index) => (
-          <Link to="Groups" key={index}>
+          <Link to={year} key={index}>
             <SmallCard text={year} notNavigate={true} />
           </Link>
         ))}

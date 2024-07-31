@@ -18,6 +18,7 @@ const getGroupById = async (id) => {
 };
 
 const getGroups = async (theRest) => {
+  console.log(theRest);
   try {
     const response = await axios.post(
       `http://localhost:3000/api/groups/getAllGroups`,
@@ -63,4 +64,70 @@ const addGroupApi = async (group) => {
   }
 };
 
-export { getGroups, addGroupApi, getGroupById };
+const deleteGroup = async (id) => {
+  try {
+    const response = await axios.delete(
+      "http://localhost:3000/api/groups/deleteGroup",
+
+      {
+        data: { id: id },
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to delete group:", err);
+  }
+};
+
+const updateGroupStatus = async (id, isCompleted) => {
+  try {
+    const response = await axios.put(
+      "http://localhost:3000/api/groups/updateGroupStatus",
+      {
+        id: id,
+        isCompleted,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update group status:", err);
+  }
+};
+const updateGroup = async (group) => {
+  try {
+    const response = await axios.put(
+      "http://localhost:3000/api/groups/updateGroup",
+      {
+        id: group.id,
+        name: group.groupName,
+        price: group.price,
+        numberOfSessions: group.numberOfSessions,
+        maxStudents: group.studentCount,
+        teacher: group.teacher,
+        paymentMethod: group.paymentMethod,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update group:", err);
+  }
+};
+
+export {
+  getGroups,
+  addGroupApi,
+  getGroupById,
+  deleteGroup,
+  updateGroupStatus,
+  updateGroup,
+};

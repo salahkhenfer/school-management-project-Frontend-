@@ -1,18 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
 import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react";
+import { addCourse, getCourses } from "../../apiCalls/coursesCalls";
 
 function Courses() {
-  const [addCourses, setAddCourses] = React.useState(false);
+  const [addCourses, setAddCourses] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [courses, setCourses] = useState([]);
+  const [CourseName, setCourseName] = useState("");
 
-  const handelAdd = () => {
-    setAddCourses(false);
+  const handelAdd = async (onClose) => {
+    if (CourseName.trim() === "") {
+      return;
+    }
+    const response = await addCourse(CourseName);
+    if (response) {
+      fatchCourses();
+    }
+    onClose();
   };
   const handelCancel = () => {
     setAddCourses(false);
   };
 
+  const fatchCourses = async () => {
+    const response = await getCourses();
+    setCourses(response);
+  };
+  useEffect(() => {
+    fatchCourses();
+  }, []);
   return (
     <div
       className={`max-w-[1000px] duration-200 relative  w-full mx-auto ${
@@ -29,8 +46,14 @@ function Courses() {
         style={addCourses ? { filter: "blur(2px)" } : {}}
         className=" flex w-full justify-center items-center flex-wrap gap-10"
       >
-        <SmallCard text=" البرمجة " />
-        <SmallCard text=" الروبتيك " />
+        {courses?.map((course) => (
+          <SmallCard
+            key={course.id}
+            id={course.id}
+            text={course.name}
+            notNavigate={true}
+          />
+        ))}
       </div>
       <div
         style={addCourses ? { filter: "blur(2px)" } : {}}
@@ -53,21 +76,25 @@ function Courses() {
       >
         <ModalContent className="w-fit">
           {(onClose) => (
-            <div className="md:w-96 max-md:w-full p-4   h-fit md:px-12  md:py-2   bg-gray-200 rounded-3xl justify-start items-center inline-flex">
+            <div className=" max-md:w-full p-4   h-fit md:px-12  md:py-2   bg-gray-200 rounded-3xl justify-start items-center inline-flex">
               <div className=" max-md:w-full self-stretch flex-col justify-start items-end gap-4 inline-flex">
                 <div className="self-stretch text-center text-gray-800 text-3xl font-semibold font-['Cairo'] leading-10">
                   إضافة دورة
                 </div>
-                <input className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2" />
-
-                <div
-                  onClick={handelAdd}
+                <input
+                  onChange={(e) => setCourseName(e.target.value)}
+                  type="text"
+                  placeholder="اسم الدورة"
+                  className=" w-full focus:outline-none  px-8 py-2 rounded-lg border border-black/opacity-70 justify-end items-center gap-2"
+                />
+                <Button
+                  onClick={() => handelAdd(onClose)}
                   className="self-stretch cursor-pointer px-8 py-2 bg-indigo-500 rounded-2xl justify-center items-center gap-2 inline-flex"
                 >
                   <div className="text-right text-white text-base font-semibold font-['Cairo'] leading-normal">
                     اضافة{" "}
                   </div>
-                </div>
+                </Button>
                 <div
                   onClick={handelCancel}
                   className="self-stretch cursor-pointer px-8 py-2 bg-red-600 rounded-2xl justify-center items-center gap-2 inline-flex"

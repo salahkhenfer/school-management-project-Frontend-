@@ -46,28 +46,31 @@ function SideBar({ isOpen, setIsOpen }) {
           المستويات{" "}
         </Link>
       </div>
-      <div>
+      <div className="flex flex-col">
         <div className="font-bold  py-2 "> المستخدمين واالإضافات</div>
-        <div
+        <Link
+          to="/additional/Students"
           onClick={() => setIsOpen(false)}
-          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+          className="px-4 py-1 w-full  rounded-lg hover:bg-gray-200 cursor-pointer"
         >
-          التالميذ{" "}
-        </div>
-        <div
+          التلاميذ{" "}
+        </Link>
+        <Link
+          to="/additional/Teachers"
           onClick={() => setIsOpen(false)}
-          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+          className="px-4 w-full py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
         >
           {" "}
           االساتذة{" "}
-        </div>
-        <div
+        </Link>
+        <Link
+          to="/additional/Parents"
           onClick={() => setIsOpen(false)}
-          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+          className="px-4 w-full py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
         >
           {" "}
           اولياء التالميذ{" "}
-        </div>
+        </Link>
       </div>
       <div>
         <div className="font-bold  py-2 "> التسيير المالي</div>

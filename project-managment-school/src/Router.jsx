@@ -12,6 +12,9 @@ import { Login } from "./login/Login";
 import Statistics from "./admins/statistics/Statistics";
 import AdditionalWebSite from "./admins/controlWebsite/AdditionalWebSite";
 import RegimentControl from "./admins/controlWebsite/RegimentControl";
+import Students from "./admins/UsersAndAdditional/Students";
+import Teachers from "./admins/UsersAndAdditional/Teachers";
+import Parents from "./admins/UsersAndAdditional/Parents";
 
 const routes = createBrowserRouter([
   {
@@ -59,11 +62,11 @@ const routes = createBrowserRouter([
         element: <LevelYears />,
       },
       {
-        path: "/classes/Levels/:levelParams/:modulePrams/Groups",
+        path: "/classes/Levels/:levelParams/:modulePrams/:groupParams",
         element: <Groups />,
       },
       {
-        path: "/classes/Levels/:levelParams/:modulePrams/Groups/:groupParams",
+        path: "/classes/Levels/:levelParams/:modulePrams/:groupParams",
         element: <Group />,
       },
       {
@@ -72,7 +75,6 @@ const routes = createBrowserRouter([
       },
       {
         index: true,
-
         element: <Statistics />,
       },
       {
@@ -84,6 +86,18 @@ const routes = createBrowserRouter([
         path: "/additionalWebSite/:additionalWebSitePrams",
 
         element: <RegimentControl />,
+      },
+      {
+        path: "/additional/Students",
+        element: <Students />,
+      },
+      {
+        path: "/additional/Teachers",
+        element: <Teachers />,
+      },
+      {
+        path: "/additional/Parents",
+        element: <Parents />,
       },
     ],
   },

@@ -7,14 +7,15 @@ import {
 } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import { MdDelete } from "react-icons/md";
-import { FaCheck, FaCheckCircle, FaCheckDouble, FaEdit } from "react-icons/fa";
+import { FaCheck, FaEdit } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field, Form } from "formik";
 import {
   addSchedule,
   deleteSchedule,
   getAllFreeRegiments,
   getSchedule,
+  updateSchedule,
 } from "../../../apiCalls/scheduleCalls";
 
 function LineAddTime({
@@ -27,23 +28,15 @@ function LineAddTime({
   line,
   setGroup,
   group,
+  lines,
+  setLines,
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [roomIsAvilabel, setRoomIsAvilabel] = useState(false);
   const [locations, setLocations] = useState([]);
   const [LoadingRoom, setLoadingRoom] = useState(false);
-  const [schedule, setSchedule] = useState({
-    id: 10,
-    day: "الاربعاء",
-    startTime: "08:00:00",
-    endTime: "10:00:00",
-    location: "Gym A",
-    startDate: "0223-04-02T23:46:25.000Z",
-    endDate: "4222-03-04T00:00:00.000Z",
-    createdAt: "2024-07-23T10:05:12.000Z",
-    updatedAt: "2024-07-23T10:05:12.000Z",
-    groupId: null,
-  });
+  const [schedule, setSchedule] = useState();
+  const [ID, setID] = useState(id);
 
   const days = [
     { key: "1", label: "السبت" },
@@ -54,22 +47,25 @@ function LineAddTime({
     { key: "6", label: "الخميس" },
     { key: "7", label: "الجمعة" },
   ];
+
   const getScheduleAPi = async () => {
     try {
-      const response = await getSchedule(id);
-      console.log(response);
-      setSchedule(response);
-      console.log(id);
+      const fetchedSchedule = await getSchedule(id);
+      setSchedule(fetchedSchedule);
+      console.log(fetchedSchedule);
     } catch (error) {
       console.error("Error getting schedule:", error);
     }
   };
 
   useEffect(() => {
-    getScheduleAPi();
+    if (ID) {
+      getScheduleAPi();
+      setIsDisabled(true);
+      setRoomIsAvilabel(true);
+    }
+  }, [ID]);
 
-    setSchedule(line);
-  }, []);
   const handelAddSchedule = async ({
     timeFrom,
     timeTo,
@@ -78,22 +74,25 @@ function LineAddTime({
     regimentId,
     group,
   }) => {
-    console.log(line);
     if (roomIsAvilabel) {
       setIsDisabled(!isDisabled);
       if (isDisabled) {
         setRoomIsAvilabel(false);
       }
     }
-    console.log({
-      timeFrom,
-      timeTo,
-      day,
-      location,
-      regimentId,
-      group,
-    });
     try {
+      console.log(ID);
+      if (ID) {
+        const updatedSchedule = await updateSchedule({
+          startTime: timeFrom,
+          endTime: timeTo,
+          day,
+          location,
+          id: ID,
+        });
+        console.log(updatedSchedule);
+        return;
+      }
       const addScheduleResult = await addSchedule({
         startTime: timeFrom,
         endTime: timeTo,
@@ -101,9 +100,12 @@ function LineAddTime({
         location,
         regiment: regimentId,
         group,
+        id: ID,
       });
 
       console.log(addScheduleResult);
+      fatchGroup();
+      // setID(addScheduleResult.id);
     } catch (error) {
       console.error("Error adding schedule:", error);
     }
@@ -111,11 +113,6 @@ function LineAddTime({
 
   const handleSearchRoom = async (values) => {
     setLoadingRoom(true);
-    console.log({
-      timeFrom: formatTime(values.timeFrom),
-      timeTo: formatTime(values.timeTo),
-      day: values.day,
-    });
     const getFreeRegiments = await getAllFreeRegiments({
       startDate,
       endDate,
@@ -123,12 +120,11 @@ function LineAddTime({
       endTime: formatTime(values.timeTo),
       day: values.day,
     });
-    console.log(getFreeRegiments);
     setLocations(getFreeRegiments);
-
     setRoomIsAvilabel(true);
     setLoadingRoom(false);
   };
+
   function formatTime(time) {
     if (
       !time ||
@@ -144,7 +140,8 @@ function LineAddTime({
   const handleRemove = async (index) => {
     try {
       const deleteScheduleResult = await deleteSchedule(index);
-      onRemove(index);
+      // onRemove(index);
+      setLines(lines.filter((line) => line.id !== index));
       console.log(deleteScheduleResult);
     } catch (error) {
       console.error("Error deleting schedule:", error);
@@ -153,38 +150,37 @@ function LineAddTime({
 
   return (
     <Formik
+      enableReinitialize={true}
       initialValues={
-        id
+        schedule
           ? {
-              timeFrom: schedule?.startTime,
-              timeTo: schedule?.endTime,
-              day: schedule?.day,
-              location: schedule?.location,
+              timeFrom: new Time(
+                schedule.startTime.split(":")[0],
+                schedule.startTime.split(":")[1]
+              ),
+              timeTo: new Time(
+                schedule.endTime.split(":")[0],
+                schedule.endTime.split(":")[1]
+              ),
+              day: schedule.day,
+              location: schedule.location,
             }
           : {
               timeFrom: "",
               timeTo: "",
               day: "",
-              location,
+              location: "",
             }
       }
       onSubmit={(values) => {
-        // Handle form submission
-
-        console.log({
-          ...values,
-          timeFrom: formatTime(values.timeFrom),
-          timeTo: formatTime(values.timeTo),
-        });
         const formattedValues = {
           ...values,
           timeFrom: formatTime(values.timeFrom),
           timeTo: formatTime(values.timeTo),
           group: groupID,
           location: values.location,
-          regimentId: values.location,
+          regimentId: values.regiment,
         };
-        console.log(formattedValues);
         handelAddSchedule(formattedValues);
       }}
     >
@@ -201,6 +197,7 @@ function LineAddTime({
                   color="primary"
                   variant="bordered"
                   className="ltrDiraction"
+                  hourCycle={24}
                   style={{ direction: "ltr", backgroundColor: "transparent" }}
                   label="من"
                   isDisabled={isDisabled}
@@ -214,7 +211,7 @@ function LineAddTime({
               {({ field }) => (
                 <TimeInput
                   {...field}
-                  type="time"
+                  hourCycle={24}
                   color="primary"
                   variant="bordered"
                   className="ltrDiraction"
@@ -233,7 +230,7 @@ function LineAddTime({
                   color="primary"
                   variant="bordered"
                   label="ايام التوقيت"
-                  placeholder="اختر يوم"
+                  placeholder={field.value || "اختر يوم"}
                   defaultItems={days}
                   isDisabled={isDisabled}
                   selected={field.value}
@@ -254,12 +251,13 @@ function LineAddTime({
               className="w-1/2 px-10"
               color="primary"
               startContent={<FaCheck />}
+              isDisabled={isDisabled}
               onClick={() => handleSearchRoom(values)}
             >
               {LoadingRoom ? (
                 <Spinner color="white" />
               ) : (
-                <div> بحث عن القاعة</div>
+                <div>بحث عن القاعة</div>
               )}
             </Button>
             {roomIsAvilabel && !LoadingRoom && (
@@ -270,19 +268,17 @@ function LineAddTime({
                     color="primary"
                     variant="bordered"
                     label="القاعة"
-                    placeholder="اختر قاعة"
+                    placeholder={field.value || "اختر القاعة"}
+                    value={field.value}
                     defaultItems={locations}
                     isDisabled={isDisabled}
-                    // onClick={(value) => console.log("hello")}
-
-                    onBlur={(value) => console.log("hello")}
                     onChange={(value) => setFieldValue("location", value)}
                   >
                     {(item) => (
                       <AutocompleteItem
                         onClick={() => {
-                          setFieldValue("location", item.id);
-                          setFieldValue("regimentId", item.name);
+                          setFieldValue("location", item.name);
+                          setFieldValue("regiment", item.id);
                         }}
                         key={item.id}
                       >
@@ -301,10 +297,14 @@ function LineAddTime({
                 onClick={() => handleRemove(id)}
               ></Button>
               {!isDisabled ? (
-                roomIsAvilabel && (
+                roomIsAvilabel &&
+                values.timeFrom &&
+                values.timeTo &&
+                values.day &&
+                values.location &&
+                values.regiment && (
                   <Button
                     type="submit"
-                    // onClick={handelAddSchedule}
                     className="text-white"
                     color="success"
                     variant="solid"
@@ -329,4 +329,3 @@ function LineAddTime({
 }
 
 export default LineAddTime;
-5;

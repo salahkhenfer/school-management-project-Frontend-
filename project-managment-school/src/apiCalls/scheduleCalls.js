@@ -31,22 +31,36 @@ const getAllFreeRegiments = async ({
 
 const addSchedule = async (schedule) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3000/api/schedules/addSchedule",
-      {
-        regimentId: schedule.regiment,
+    if (schedule.id) {
+      const updatedSchedule = await updateSchedule({
         startTime: schedule.startTime,
         endTime: schedule.endTime,
         day: schedule.day,
         location: schedule.location,
-        groupID: schedule.group,
-      },
-      {
-        withCredentials: true,
-      }
-    );
-    console.log(response.data);
-    return response.data;
+        id: schedule.id,
+      });
+      console.log(updatedSchedule);
+
+      return;
+    }
+    if (schedule.group) {
+      const response = await axios.post(
+        "http://localhost:3000/api/schedules/addSchedule",
+        {
+          regimentId: schedule.regiment,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
+          day: schedule.day,
+          location: schedule.location,
+          groupID: schedule.group,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data.schedule);
+      return response.data.schedule;
+    }
   } catch (err) {
     console.error("Failed to add group:", err);
   }
@@ -83,4 +97,26 @@ const getSchedule = async (id) => {
     console.error("Failed to fetch schedule:", err);
   }
 };
-export { getAllFreeRegiments, addSchedule, deleteSchedule, getSchedule };
+const updateSchedule = async ({ id, startTime, endTime, day, location }) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:3000/api/schedules/updateSchedule`,
+      { id, startTime, endTime, day, location },
+
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update schedule:", err);
+  }
+};
+export {
+  getAllFreeRegiments,
+  updateSchedule,
+  addSchedule,
+  deleteSchedule,
+  getSchedule,
+};

@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Example for importing Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap");
+
 * {
   box-sizing: border-box;
 
