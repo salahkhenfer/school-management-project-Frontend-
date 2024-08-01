@@ -391,6 +391,10 @@ function Students() {
             cursor-pointer
           "
                     key={item.id}
+                    onClick={() => {
+                      nav(`${item.id}`);
+                      console.log(item.id);
+                    }}
                   >
                     {(columnKey) => (
                       <TableCell className="text-right h-7">

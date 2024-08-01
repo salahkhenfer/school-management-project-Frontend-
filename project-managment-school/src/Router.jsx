@@ -15,6 +15,7 @@ import RegimentControl from "./admins/controlWebsite/RegimentControl";
 import Students from "./admins/UsersAndAdditional/Students";
 import Teachers from "./admins/UsersAndAdditional/Teachers";
 import Parents from "./admins/UsersAndAdditional/Parents";
+import StudentsInfo from "./components/adminsCompnents/UsersAndAdditional/StudentsInfo";
 
 const routes = createBrowserRouter([
   {
@@ -90,6 +91,10 @@ const routes = createBrowserRouter([
       {
         path: "/additional/Students",
         element: <Students />,
+      },
+      {
+        path: "/additional/Students/:studentParams",
+        element: <StudentsInfo />,
       },
       {
         path: "/additional/Teachers",

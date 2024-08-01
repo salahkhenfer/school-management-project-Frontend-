@@ -1,3 +1,4 @@
+import { data } from "autoprefixer";
 import axios from "axios";
 
 const deleteStudent = async (id) => {
@@ -33,15 +34,18 @@ const getAllStudent = async (page) => {
 };
 const getStudentById = async (id) => {
   try {
-    const response = await axios.get(
+    const response = await axios.post(
       "http://localhost:3000/api/students/getStudentById",
       {
-        params: { id: id },
+        id: id,
+      },
+
+      {
         withCredentials: true,
       }
     );
     console.log(response.data);
-    return response.data;
+    return response.data.student;
   } catch (err) {
     console.error("Failed to get student by id:", err);
   }
