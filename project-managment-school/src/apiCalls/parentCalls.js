@@ -41,15 +41,13 @@ const addStudentInToParent = async (phoneNumber, studentId) => {
     return false;
   }
 };
-const deleteStudentForParent = async (studentId, parentId) => {
+const deleteStudentForParent = async (info) => {
   try {
     const response = await axios.delete(
       "http://localhost:3000/api/parents/deleteStudentForParent",
+
       {
-        studentId: studentId,
-        parentId: parentId,
-      },
-      {
+        data: info,
         withCredentials: true,
       }
     );

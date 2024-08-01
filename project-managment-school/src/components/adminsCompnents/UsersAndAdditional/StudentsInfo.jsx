@@ -92,10 +92,10 @@ function StudentsInfo() {
   const deleteParent = async () => {
     console.log("student.id", student.id);
     console.log("student.parent.id", student.parent.id);
-    const response = await deleteStudentForParent(
-      student.id,
-      student.parent.id
-    );
+    const response = await deleteStudentForParent({
+      studentId: student.id,
+      parentId: student.parent.id,
+    });
     console.log(response);
     fetchStudent();
   };
