@@ -72,21 +72,30 @@ function SideBar({ isOpen, setIsOpen }) {
           اولياء التالميذ{" "}
         </Link>
       </div>
-      <div>
+      <div className="flex flex-col">
         <div className="font-bold  py-2 "> التسيير المالي</div>
-        <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <Link
+          to="/Financialmanagement"
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
           االأستاذ{" "}
-        </div>
-        <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
+        </Link>
+        <Link
+          to="FinancialEmployer"
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
           {" "}
           العمال{" "}
-        </div>
+        </Link>
       </div>
-      <div>
+      <div className="flex flex-col">
         <div className="font-bold  px-2 "> التحكم في الموقع </div>
-        <div className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer">
+        <Link
+          to="/Permission"
+          className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"
+        >
           تحديد الصلاحيات
-        </div>
+        </Link>
         <Link
           to="/additionalWebSite"
           className="px-4 py-1 rounded-lg hover:bg-gray-200 cursor-pointer"

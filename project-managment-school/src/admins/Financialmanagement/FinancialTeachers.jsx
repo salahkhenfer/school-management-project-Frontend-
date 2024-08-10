@@ -17,19 +17,22 @@ import {
   Pagination,
 } from "@nextui-org/react";
 import * as Yup from "yup";
-import { Form, useLocation, useNavigate } from "react-router-dom";
+import { Form, Link, useLocation, useNavigate } from "react-router-dom";
 
 import { ErrorMessage, Field, Formik } from "formik";
-import { Input, DatePicker } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import Swal from "sweetalert2";
 import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { FaEye, FaEyeSlash, FaSearch } from "react-icons/fa";
-import { formatDate } from "date-fns";
-import { getAllTeachers, addTeacherApi } from "../../apiCalls/teacherCalls";
+import {
+  getAllTeachers,
+  addTeacherApi,
+  searchTeacherApi,
+} from "../../apiCalls/teacherCalls";
 // import { getAllSubjects } from "../../apiCalls/subjectCalls";
 
-function Teachers() {
+function FinancialTeachers() {
   const nav = useNavigate();
   const [teachers, setTeachers] = useState([]);
   const pathname = useLocation().pathname;
@@ -41,8 +44,6 @@ function Teachers() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  // const [subjects, setSubjects] = useState([]);
 
   const fetchTeachers = async () => {
     setLoadingTeachers(true);
@@ -56,68 +57,12 @@ function Teachers() {
     // fetchSubjects();
   }, []);
 
-  const initialValues = {
-    teacherName: "",
-    email: "",
-    phone: "",
-    password: "",
-  };
-
-  const validationSchema = Yup.object({
-    teacherName: Yup.string().required("الاسم الكامل مطلوب"),
-    email: Yup.string()
-      .email("البريد الإلكتروني غير صالح")
-      .required("البريد الإلكتروني مطلوب"),
-    phone: Yup.string().required("رقم الهاتف مطلوب"),
-    password: Yup.string().required("كلمة المرور مطلوبة"),
-  });
-
-  const deleteTeacherApi = async (index, id) => {
-    try {
-      const result = await Swal.fire({
-        title: "هل أنت متأكد؟",
-        text: "هل تريد حقًا حذف هذا المعلم؟ لا يمكن التراجع عن هذا الإجراء",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "نعم، قم بالحذف",
-        cancelButtonText: "إلغاء",
-      });
-
-      if (result.isConfirmed) {
-        // await deleteTeacher(id);
-
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "تم حذف المعلم بنجاح",
-          timer: 1500,
-          confirmButtonText: "حسنًا",
-        }).then(() => {
-          fetchTeachers();
-        });
-
-        setTeachers((prevList) => prevList.filter((_, i) => i !== index));
-      }
-    } catch (err) {
-      console.error("Failed to delete teacher:", err);
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "حدث خطأ ما، يرجى المحاولة مرة أخرى",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
-  };
-
   const handleSearch = async () => {
     if (searchTeacher === "") {
       return fetchTeachers();
     }
-    // const newList = await searchTeacherApi(searchTeacher);
-    // setTeachers(newList);
+    const newList = await searchTeacherApi(searchTeacher);
+    setTeachers(newList);
   };
 
   return (
@@ -149,15 +94,18 @@ function Teachers() {
             type="search"
           />
         </div>
-        <Button
-          onPress={onOpen}
-          className="w-fit h-fit cursor-pointer mb-5 mx-auto bg-indigo-500 rounded-2xl justify-center items-center gap-2 "
-        >
-          <div className="text-center text-white text-xl px-8 py-1 font-semibold font-['Cairo'] leading-9">
-            إضافة معلم
-          </div>
-          <IoIosAddCircle color="white" className="w-6 h-6" />
-        </Button>
+        <div>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              nav("TransitionDone");
+            }}
+            color="success"
+            className="text-white px-3"
+          >
+            رؤية التحويلات النمرسلة للأستاذ
+          </Button>
+        </div>
       </div>
       {loadingTeachers ? (
         <div className="flex justify-center items-center w-full h-full">
@@ -177,7 +125,6 @@ function Teachers() {
                 <TableColumn key="id">رمز المعلم</TableColumn>
                 <TableColumn key="fullName">اسم المعلم</TableColumn>
                 <TableColumn key="phoneNumber">رقم الهاتف </TableColumn>
-                <TableColumn key="action">العمليات</TableColumn>
               </TableHeader>
               <TableBody items={teachers}>
                 {(item) => (
@@ -190,24 +137,7 @@ function Teachers() {
                   >
                     {(columnKey) => (
                       <TableCell className="text-right h-7">
-                        {columnKey === "action" ? (
-                          <div className="flex ">
-                            <Button
-                              color="danger"
-                              startContent={<MdDelete />}
-                              onClick={() =>
-                                deleteTeacherApi(
-                                  teachers.indexOf(item),
-                                  item.id
-                                )
-                              }
-                            >
-                              {" "}
-                            </Button>
-                          </div>
-                        ) : (
-                          getKeyValue(item, columnKey)
-                        )}
+                        {getKeyValue(item, columnKey)}
                       </TableCell>
                     )}
                   </TableRow>
@@ -409,4 +339,4 @@ function Teachers() {
   );
 }
 
-export default Teachers;
+export default FinancialTeachers;

@@ -62,7 +62,7 @@ export function Login() {
         <Input
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          label="البريد الالكتروني"
+          label="اسم المستخدم"
           className="mb-4"
         />
         <Input

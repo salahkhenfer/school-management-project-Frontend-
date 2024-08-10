@@ -224,8 +224,8 @@ function Groups() {
                 {(columnKey) => (
                   <TableCell key={columnKey + item} className="text-right">
                     {columnKey === "Teachers"
-                      ? item.Teachers && item.Teachers.length > 0
-                        ? item.Teachers[0].name // Access the fullName property directly
+                      ? item.teachers && item.teachers.length > 0
+                        ? item.teachers?.slice(-1)[0]?.fullName // Access the fullName property directly
                         : "لم يحد بعد"
                       : getKeyValue(item, columnKey)}
                   </TableCell>

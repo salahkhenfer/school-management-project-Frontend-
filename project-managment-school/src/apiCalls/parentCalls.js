@@ -22,7 +22,7 @@ const addParent = async (parent) => {
     return false;
   }
 };
-const addStudentInToParent = async (phoneNumber, studentId) => {
+const addStudentInToParent = async (phoneNumber, studentId = "") => {
   try {
     const response = await axios.post(
       "http://localhost:3000/api/parents/addStudentInToParent",
@@ -57,4 +57,114 @@ const deleteStudentForParent = async (info) => {
     console.error("Failed to delete student for parent:", err);
   }
 };
-export { addParent, addStudentInToParent, deleteStudentForParent };
+const getAllParents = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/api/parents/getAllParents",
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.parents;
+  } catch (err) {
+    console.error("Failed to get all parents:", err);
+  }
+};
+
+const searchParent = async (name) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/api/parents/searchParent`,
+      {
+        name: name,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.parents;
+  } catch (err) {
+    console.error("Failed to search parent:", err);
+  }
+};
+const deleteParentApi = async (info) => {
+  try {
+    const response = await axios.delete(
+      "http://localhost:3000/api/parents/deleteParent",
+
+      {
+        data: info,
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to delete parent:", err);
+  }
+};
+
+const getParentById = async (id) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/api/parents/getParentById`,
+      {
+        id: id,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.parent;
+  } catch (err) {
+    console.error("Failed to get parent by id:", err);
+  }
+};
+
+const checkParentApi = async (phoneNumber) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/parents/checkParent",
+      {
+        phoneNumber: phoneNumber,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.message;
+  } catch (err) {
+    console.error("Failed to check parent:", err);
+  }
+};
+
+const deleteStudentFormParent = async (info) => {
+  try {
+    const response = await axios.delete(
+      "http://localhost:3000/api/parents/deleteStudentFormParent",
+      {
+        data: info,
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response;
+  } catch (err) {
+    console.error("Failed to delete student for parent:", err);
+  }
+};
+export {
+  addParent,
+  searchParent,
+  addStudentInToParent,
+  deleteStudentForParent,
+  getAllParents,
+  deleteParentApi,
+  getParentById,
+  checkParentApi,
+  deleteStudentFormParent,
+};

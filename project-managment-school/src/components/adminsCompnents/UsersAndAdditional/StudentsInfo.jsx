@@ -76,7 +76,7 @@ function StudentsInfo() {
         password: event.target.password.value,
         studentId: studentParams,
       };
-      addParentApi(parentData);
+      await addParentApi(parentData);
       fetchStudent();
       Swal.fire({
         icon: "success",

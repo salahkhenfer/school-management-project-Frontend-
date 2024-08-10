@@ -323,6 +323,9 @@ function Students() {
   };
   return (
     <div>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold my-5">التلاميذ</h1>
+      </div>
       <div className="w-full max-md:flex-col flex justify-between items-center">
         <div className="w-full py-5 ">
           <Input

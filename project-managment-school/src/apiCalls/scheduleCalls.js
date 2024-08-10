@@ -113,10 +113,64 @@ const updateSchedule = async ({ id, startTime, endTime, day, location }) => {
     console.error("Failed to update schedule:", err);
   }
 };
+const getAllRegiments = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/api/schedules/getAllRegiments",
+
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.regiments;
+  } catch (err) {
+    console.error("Failed to fetch regiments:", err);
+  }
+};
+
+const addRegimentApi = async (regiment) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/schedules/addRegiment",
+      {
+        name: regiment,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to add regiment:", err);
+  }
+};
+
+const deleteRegimentApi = async (id) => {
+  try {
+    const response = await axios.delete(
+      "http://localhost:3000/api/schedules/deleteRegiment",
+
+      {
+        data: { id },
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to delete regiment:", err);
+  }
+};
+
 export {
   getAllFreeRegiments,
   updateSchedule,
   addSchedule,
+  getAllRegiments,
   deleteSchedule,
   getSchedule,
+  addRegimentApi,
+  deleteRegimentApi,
 };

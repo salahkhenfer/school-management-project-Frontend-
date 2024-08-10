@@ -16,6 +16,14 @@ import Students from "./admins/UsersAndAdditional/Students";
 import Teachers from "./admins/UsersAndAdditional/Teachers";
 import Parents from "./admins/UsersAndAdditional/Parents";
 import StudentsInfo from "./components/adminsCompnents/UsersAndAdditional/StudentsInfo";
+import ParentInfo from "./components/adminsCompnents/UsersAndAdditional/ParentInfo";
+import TeacherInfo from "./components/adminsCompnents/UsersAndAdditional/TeacherInfo";
+import FinancialTeachers from "./admins/Financialmanagement/FinancialTeachers";
+import FinancialTeachersInfo from "./components/adminsCompnents/Financialmanagement/FinancialTeachersInfo";
+import TransitionDone from "./components/adminsCompnents/Financialmanagement/TransitionDone";
+import FinancialEmployer from "./admins/Financialmanagement/FinancialEmployer";
+import Permission from "./admins/permissions/permission";
+import AllUsersPermission from "./admins/permissions/AllUsersPermission";
 
 const routes = createBrowserRouter([
   {
@@ -101,8 +109,44 @@ const routes = createBrowserRouter([
         element: <Teachers />,
       },
       {
+        path: "/additional/Teachers/:teacherParams",
+        element: <TeacherInfo />,
+      },
+      {
         path: "/additional/Parents",
         element: <Parents />,
+      },
+      {
+        path: "/additional/Parents/:parentParams",
+        element: <ParentInfo />,
+      },
+      {
+        path: "/Financialmanagement",
+        element: <FinancialTeachers />,
+      },
+      {
+        path: "/FinancialEmployer",
+        element: <FinancialEmployer />,
+      },
+      {
+        path: "/Financialmanagement/:FinancialTeachersParams",
+        element: <FinancialTeachersInfo />,
+      },
+      {
+        path: "/Financialmanagement/:FinancialTeachersParams/TransitionDone",
+        element: <TransitionDone />,
+      },
+      {
+        path: "/Financialmanagement/TransitionDone",
+        element: <TransitionDone />,
+      },
+      {
+        path: "/Permission",
+        element: <Permission />,
+      },
+      {
+        path: "/Permission/AllUsersPermission",
+        element: <AllUsersPermission />,
       },
     ],
   },

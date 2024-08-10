@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import SmallCard from "../../components/adminsCompnents/Classes/SmallCard";
 import { Button, Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { addCourse, getCourses } from "../../apiCalls/coursesCalls";
+import {
+  addCourse,
+  deleteCourse,
+  getCourses,
+} from "../../apiCalls/coursesCalls";
+import Swal from "sweetalert2";
 
 function Courses() {
   const [addCourses, setAddCourses] = useState(false);
@@ -30,6 +35,26 @@ function Courses() {
   useEffect(() => {
     fatchCourses();
   }, []);
+  const handelDelete = async (id) => {
+    Swal.fire({
+      title: "هل انت متأكد من حذف الدورة؟",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "نعم",
+      cancelButtonText: "لا",
+      cancelButtonColor: "#d33",
+      confirmButtonColor: "#3085d6",
+    })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          await deleteCourse(id);
+          fatchCourses();
+        }
+      })
+      .catch((err) => {
+        Swal.fire("حدث خطأ ما", err, "error");
+      });
+  };
   return (
     <div
       className={`max-w-[1000px] duration-200 relative  w-full mx-auto ${
@@ -51,7 +76,8 @@ function Courses() {
             key={course.id}
             id={course.id}
             text={course.name}
-            notNavigate={true}
+            notNavigate={false}
+            handleDelete={handelDelete}
           />
         ))}
       </div>

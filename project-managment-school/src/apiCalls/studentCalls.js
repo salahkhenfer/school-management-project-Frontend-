@@ -84,10 +84,26 @@ const searchStudentApi = async (name) => {
     console.error("Failed to search student:", err);
   }
 };
+
+const countStudents = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/api/students/countStudents",
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.count;
+  } catch (err) {
+    console.error("Failed to count students:", err);
+  }
+};
 export {
   deleteStudent,
   getAllStudent,
   getStudentById,
   addStudent,
   searchStudentApi,
+  countStudents,
 };

@@ -78,12 +78,6 @@ function Group() {
     setSelectedPaymentMethod(event.target.value);
   };
 
-  const convertToDate = (value) => {
-    if (value && !(value instanceof Date)) {
-      return new Date(value); // Convert from string or other formats
-    }
-    return value || null;
-  }; // Return Date object or null
   const handelCancel = () => {
     setAddGroup(false);
   };
@@ -98,11 +92,12 @@ function Group() {
             ? parseInt(group?.Teachers?.slice(-1)[0]?.id)
             : "", // Fallback to an empty string if no teacher
         paymentMethod: group.paymentMethod === "session" ? "1" : "2",
-        paymentPerSession: group.paymentMethod === "session" ? group.price : "",
+        paymentPerSession: group.paymentMethod === "session" ? group.type : "",
         paymentPercentage:
-          group.paymentMethod === "percentage" ? group.price : "",
+          group.paymentMethod === "percentage" ? group.type : "",
         price: group.price,
         numberOfSessions: group.numberOfSessions,
+        type: group.type,
       }
     : {
         groupName: "",
@@ -115,6 +110,7 @@ function Group() {
         paymentPercentage: "",
         price: "",
         numberOfSessions: "",
+        type: "",
       };
 
   const validationSchema = Yup.object({
@@ -142,13 +138,31 @@ function Group() {
     numberOfSessions: Yup.number().required("عدد الحصص مطلوب"),
   });
 
-  const transformValues = (values) => {
-    console.log(values);
+  // const transformValues = (values) => {
+  //   console.log(values);
 
+  //   return {
+  //     ...values,
+  //     id: group.id,
+  //   };
+  // };
+  const transformValues = (values) => {
+    const paymentMethod =
+      values.paymentMethod == "1" ? "session" : "percentage";
+    const type =
+      values.paymentMethod !== "1"
+        ? values.paymentPercentage
+        : values.paymentPerSession;
+    console.log(type);
     return {
-      ...values,
       id: group.id,
-      paymentMethod: values.paymentMethod == "1" ? "session" : "percentage",
+      type: type,
+      paymentMethod: paymentMethod,
+      price: values.price,
+      numberOfSessions: values.numberOfSessions,
+      maxStudents: values.studentCount,
+      teacher: values.teacher,
+      name: values.groupName,
     };
   };
   function formatDate(date) {
@@ -347,7 +361,7 @@ function Group() {
     setGroup(response);
     setLines(response.schedules);
     setIsCompleted(response.isCompleted);
-    console.log(response.students);
+    console.log(response);
     setStudent(response.students);
     setLoading(false);
     response.schedules.map(async (item) => {
@@ -496,7 +510,9 @@ function Group() {
         <div className="text-xl">
           <div>
             اسم الاستاذ:{" "}
-            <span>{group?.Teachers?.slice(-1)[0]?.name || "غير متوفر"}</span>
+            <span>
+              {group?.teachers?.slice(-1)[0]?.fullName || "غير متوفر"}
+            </span>
           </div>
           <div>
             عدد الطلاب: <span>{group?.maxStudents || "غير متوفر"}</span>
@@ -871,7 +887,7 @@ function Group() {
                             aria-label="سعر الحصة"
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            defaultValue={values.price}
+                            defaultValue={values.paymentPerSession}
                             endContent={
                               <div className="pointer-events-none flex items-center">
                                 <span className="text-default-400 text-small">
@@ -891,7 +907,7 @@ function Group() {
                             aria-label="نسبة الدفع"
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            defaultValue={values.price}
+                            defaultValue={values.paymentPercentage}
                             // value={values.price}
                             min={0}
                             max={100}

@@ -1,45 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CategoryScale } from "chart.js";
 import Chart from "chart.js/auto";
 import { BarChartEach } from "./BarChartEach";
+import axios from "axios";
 
 Chart.register(CategoryScale);
 
 function BarChart() {
-  const Data = [
-    { month: "January", students: 20 },
-    { month: "February", students: 15 },
-    { month: "March", students: 30 },
-    { month: "April", students: 25 },
-    { month: "May", students: 40 },
-    { month: "June", students: 10 },
-    { month: "July", students: 45 },
-    { month: "August", students: 35 },
-    { month: "September", students: 28 },
-    { month: "October", students: 22 },
-    { month: "November", students: 30 },
-    { month: "December", students: 18 },
-  ];
   const threshold = 20; // العتبة لتغيير اللون
 
   const [chartData, setChartData] = useState({
-    labels: Data.map((data) => data.month),
+    labels: [],
     datasets: [
       {
         label: "Number of Students",
-        data: Data.map((data) => data.students),
-        backgroundColor: Data.map((data) =>
-          data.students < threshold ? "#8196ff" : "#001a9f"
-        ),
+        data: [],
+        backgroundColor: [],
         borderColor: "black",
         borderWidth: 2,
       },
     ],
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/students/monthly-student-count"
+        );
+        const data = response.data;
+
+        const labels = data.map((item) =>
+          new Date(item.month).toLocaleString("default", { month: "long" })
+        );
+        const studentsData = data.map((item) => item.count);
+        const backgroundColors = data.map((item) =>
+          item.count < threshold ? "#8196ff" : "#001a9f"
+        );
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: "Number of Students",
+              data: studentsData,
+              backgroundColor: backgroundColors,
+              borderColor: "black",
+              borderWidth: 2,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div>
-      {" "}
       <BarChartEach chartData={chartData} />
     </div>
   );

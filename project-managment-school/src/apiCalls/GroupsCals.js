@@ -111,6 +111,8 @@ const updateGroup = async (group) => {
         maxStudents: group.studentCount,
         teacher: group.teacher,
         paymentMethod: group.paymentMethod,
+
+        type: group.type,
       },
       {
         withCredentials: true,
