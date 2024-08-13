@@ -99,6 +99,26 @@ const countStudents = async () => {
     console.error("Failed to count students:", err);
   }
 };
+const deleteStudentFropmGroup = async (studentId, groupId) => {
+  try {
+    const response = await axios.delete(
+      "http://localhost:3000/api/students/deleteStudentFropmGroup",
+      {
+        data: {
+          studentId: studentId,
+
+          groupId: groupId,
+        },
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to delete student from group:", err);
+  }
+};
+
 export {
   deleteStudent,
   getAllStudent,
@@ -106,4 +126,5 @@ export {
   addStudent,
   searchStudentApi,
   countStudents,
+  deleteStudentFropmGroup,
 };

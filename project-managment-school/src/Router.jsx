@@ -24,6 +24,9 @@ import TransitionDone from "./components/adminsCompnents/Financialmanagement/Tra
 import FinancialEmployer from "./admins/Financialmanagement/FinancialEmployer";
 import Permission from "./admins/permissions/permission";
 import AllUsersPermission from "./admins/permissions/AllUsersPermission";
+import TeachersPage from "./teachers/TeachersPage";
+import TeacherGroups from "./teachers/TeacherGroups/TeacherGroups";
+import TeacherGoupe from "./teachers/TeacherGroups/TeacherGoupe";
 
 const routes = createBrowserRouter([
   {
@@ -147,6 +150,29 @@ const routes = createBrowserRouter([
       {
         path: "/Permission/AllUsersPermission",
         element: <AllUsersPermission />,
+      },
+    ],
+  },
+  {
+    path: "/teachers",
+    element: <TeachersPage />,
+    children: [
+      {
+        index: true,
+
+        element: <TeacherGroups />,
+      },
+      {
+        path: "/teachers/:teacherGroupsParams",
+        element: <TeacherGoupe />,
+      },
+      {
+        path: "FinancialTeacher",
+        element: <FinancialTeachersInfo />,
+      },
+      {
+        path: "FinancialTeacher/TransitionDone",
+        element: <TransitionDone />,
       },
     ],
   },

@@ -6,6 +6,7 @@ import { checkauthApi, LoginApi } from "../apiCalls/authCalls";
 import LoadingFirstPage from "../components/loading/LoadingFirstPage";
 import { checkauth, login, selectAuth } from "../Redux/slices/authSlice";
 import { Navigate, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export function Login() {
   const dispatch = useDispatch();
@@ -33,10 +34,24 @@ export function Login() {
   const handleLogin = async () => {
     setLoading(true);
     try {
+      Swal.fire({
+        title: "جاري تسجيل الدخول",
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
       const userInfo = await LoginApi(username, password);
       dispatch(login(userInfo));
+      Swal.fire({
+        icon: "success",
+        title: "تم تسجيل الدخول بنجاح",
+      });
     } catch (err) {
-      console.error("Failed to login:", err);
+      Swal.fire({
+        icon: "error",
+        title: "خطأ",
+        text: "تأكد من اسم المستخدم وكلمة المرور",
+      });
     } finally {
       setLoading(false);
     }

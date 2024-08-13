@@ -26,7 +26,12 @@ import { IoIosAddCircle } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { FaEye, FaEyeSlash, FaSearch } from "react-icons/fa";
 import { formatDate } from "date-fns";
-import { getAllTeachers, addTeacherApi } from "../../apiCalls/teacherCalls";
+import {
+  getAllTeachers,
+  addTeacherApi,
+  deleteTeacherApi,
+  searchTeacherApi,
+} from "../../apiCalls/teacherCalls";
 // import { getAllSubjects } from "../../apiCalls/subjectCalls";
 
 function Teachers() {
@@ -42,8 +47,6 @@ function Teachers() {
     setShowPassword(!showPassword);
   };
 
-  // const [subjects, setSubjects] = useState([]);
-
   const fetchTeachers = async () => {
     setLoadingTeachers(true);
     const newList = await getAllTeachers();
@@ -53,7 +56,6 @@ function Teachers() {
 
   useEffect(() => {
     fetchTeachers();
-    // fetchSubjects();
   }, []);
 
   const initialValues = {
@@ -72,7 +74,7 @@ function Teachers() {
     password: Yup.string().required("كلمة المرور مطلوبة"),
   });
 
-  const deleteTeacherApi = async (index, id) => {
+  const deleteTeacher = async (index, id) => {
     try {
       const result = await Swal.fire({
         title: "هل أنت متأكد؟",
@@ -86,7 +88,7 @@ function Teachers() {
       });
 
       if (result.isConfirmed) {
-        // await deleteTeacher(id);
+        await deleteTeacherApi(id);
 
         Swal.fire({
           position: "center",
@@ -116,8 +118,8 @@ function Teachers() {
     if (searchTeacher === "") {
       return fetchTeachers();
     }
-    // const newList = await searchTeacherApi(searchTeacher);
-    // setTeachers(newList);
+    const newList = await searchTeacherApi(searchTeacher);
+    setTeachers(newList);
   };
 
   return (
@@ -196,10 +198,7 @@ function Teachers() {
                               color="danger"
                               startContent={<MdDelete />}
                               onClick={() =>
-                                deleteTeacherApi(
-                                  teachers.indexOf(item),
-                                  item.id
-                                )
+                                deleteTeacher(teachers.indexOf(item), item.id)
                               }
                             >
                               {" "}

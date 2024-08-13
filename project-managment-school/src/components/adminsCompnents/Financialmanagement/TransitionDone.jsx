@@ -17,15 +17,19 @@ import {
 } from "../../../apiCalls/PaymentsTeacher";
 import { format, formatDate } from "date-fns";
 import { BiCheck } from "react-icons/bi";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../Redux/slices/authSlice";
 
 function TransitionDone() {
   const [paymentTeacher, setPaymentTeacher] = useState([]);
 
   const { FinancialTeachersParams } = useParams();
+  const { user } = useSelector(selectAuth);
+
   const getTeacherPayment = async () => {
     if (FinancialTeachersParams) {
       const paymentTeacherApi = await getPaymentByTeacher({
-        teacherId: FinancialTeachersParams,
+        teacherId: FinancialTeachersParams || user.id,
       });
       setPaymentTeacher(paymentTeacherApi.reverse());
     } else {

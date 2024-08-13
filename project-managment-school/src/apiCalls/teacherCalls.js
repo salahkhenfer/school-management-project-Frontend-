@@ -38,11 +38,12 @@ const addTeacherApi = async (teacher) => {
 };
 
 const deleteTeacherApi = async (teacherId) => {
+  console.log(teacherId);
   try {
     const response = await axios.delete(
       "http://localhost:3000/api/teachers/DeleteTeacher",
       {
-        data: { teacherId },
+        data: { id: teacherId },
         withCredentials: true,
       }
     );

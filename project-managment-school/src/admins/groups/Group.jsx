@@ -40,7 +40,10 @@ import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { getSchedule } from "../../apiCalls/scheduleCalls";
-import { deleteStudent } from "../../apiCalls/studentCalls";
+import {
+  deleteStudent,
+  deleteStudentFropmGroup,
+} from "../../apiCalls/studentCalls";
 import { getAllTeachers } from "../../apiCalls/teacherCalls";
 import { useLocation } from "react-router-dom";
 import * as Yup from "yup";
@@ -433,16 +436,37 @@ function Group() {
   };
   const deleteStudentApi = async (index, id) => {
     try {
-      setStudent((prevList) => prevList.filter((_, i) => i !== index));
-
-      await deleteStudent(id);
       Swal.fire({
         position: "center",
-
         icon: "success",
-        title: "تم الحذف",
-        showConfirmButton: false,
-        timer: 1500,
+        title: "هل انت متأكد من حذف التلميذ؟",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "نعم, احذف التلميذ",
+        cancelButtonText: "الغاء",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await deleteStudentFropmGroup(id, group.id);
+          if (response) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "تم الحذف بنجاح",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            setStudent(student.filter((_, i) => i !== index));
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "حدث خطأ",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        }
       });
     } catch (err) {
       console.error("Failed to delete student:", err);
@@ -455,7 +479,6 @@ function Group() {
       });
     }
   };
-
   if (loading) {
     return (
       <div className="w-full h-full ">
@@ -560,21 +583,26 @@ function Group() {
       text-right
       "
           >
-            الافواج
+            قائمة الطلاب
           </div>
         </div>
-        <Table isHeaderSticky>
-          <TableHeader>
-            <TableColumn key="index">رقم التلميذ</TableColumn>
-            <TableColumn key="id">رمز التلميذ</TableColumn>
-            <TableColumn key="fullName">اسم التلميذ</TableColumn>
-            <TableColumn key="birthDay">تاريخ الميلاد</TableColumn>
-            <TableColumn key="action">العمليات</TableColumn>
-          </TableHeader>
-          <TableBody items={student}>
-            {(item) => (
-              <TableRow
-                className="
+        {student.length === 0 ? (
+          <div className="text-center text-2xl font-bold text-red-500">
+            لا يوجد طلاب في هذا الفوج
+          </div>
+        ) : (
+          <Table isHeaderSticky>
+            <TableHeader>
+              <TableColumn key="index">رقم التلميذ</TableColumn>
+              <TableColumn key="id">رمز التلميذ</TableColumn>
+              <TableColumn key="fullName">اسم التلميذ</TableColumn>
+              <TableColumn key="birthDay">تاريخ الميلاد</TableColumn>
+              <TableColumn key="action">العمليات</TableColumn>
+            </TableHeader>
+            <TableBody items={student}>
+              {(item) => (
+                <TableRow
+                  className="
           hover:bg-gray-100
           border-b-2
           border-gray-200
@@ -584,39 +612,40 @@ function Group() {
           h-4
           cursor-pointer
         "
-                key={item.id}
-              >
-                {(columnKey) => (
-                  <TableCell className="text-right h-7">
-                    {columnKey === "index" &&
-                      parseInt(student.indexOf(item)) + 1}
-                    {columnKey === "action" ? (
-                      <div className="flex ">
-                        <Button
-                          color="danger"
-                          startContent={<MdDelete />}
-                          onClick={() =>
-                            deleteStudentApi(student.indexOf(item), item.id)
-                          }
-                        >
-                          {" "}
-                          <div className="max-md:hidden">
-                            حذف التلميذ من القائمة{" "}
-                          </div>
-                        </Button>
-                      </div>
-                    ) : columnKey === "birthDay" ? (
-                      item[columnKey].split("T")[0]
-                    ) : (
-                      // getKeyValue(index, columnKey)
-                      getKeyValue(item, columnKey)
-                    )}
-                  </TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                  key={item.id}
+                >
+                  {(columnKey) => (
+                    <TableCell className="text-right h-7">
+                      {columnKey === "index" &&
+                        parseInt(student.indexOf(item)) + 1}
+                      {columnKey === "action" ? (
+                        <div className="flex ">
+                          <Button
+                            color="danger"
+                            startContent={<MdDelete />}
+                            onClick={() =>
+                              deleteStudentApi(student.indexOf(item), item.id)
+                            }
+                          >
+                            {" "}
+                            <div className="max-md:hidden">
+                              حذف التلميذ من القائمة{" "}
+                            </div>
+                          </Button>
+                        </div>
+                      ) : columnKey === "birthDay" ? (
+                        item[columnKey].split("T")[0]
+                      ) : (
+                        // getKeyValue(index, columnKey)
+                        getKeyValue(item, columnKey)
+                      )}
+                    </TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}

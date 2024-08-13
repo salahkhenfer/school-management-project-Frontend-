@@ -1,4 +1,5 @@
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const addParent = async (parent) => {
   try {
@@ -15,6 +16,7 @@ const addParent = async (parent) => {
         withCredentials: true,
       }
     );
+
     console.log(response.data);
     return response.data;
   } catch (err) {
@@ -136,6 +138,7 @@ const checkParentApi = async (phoneNumber) => {
       }
     );
     console.log(response.data);
+
     return response.data.message;
   } catch (err) {
     console.error("Failed to check parent:", err);
@@ -157,6 +160,21 @@ const deleteStudentFormParent = async (info) => {
     console.error("Failed to delete student for parent:", err);
   }
 };
+
+const countParentsApi = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/api/parents/countParents",
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to count parent:", err);
+  }
+};
 export {
   addParent,
   searchParent,
@@ -167,4 +185,5 @@ export {
   getParentById,
   checkParentApi,
   deleteStudentFormParent,
+  countParentsApi,
 };

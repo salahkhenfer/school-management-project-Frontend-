@@ -48,7 +48,7 @@ export const LogoutApi = async () => {
       }
     );
     console.log(response.data);
-    return response.data; // Return the response data on success
+    return response; // Return the response data on success
   } catch (err) {
     console.error("Failed to logout:", err);
   }

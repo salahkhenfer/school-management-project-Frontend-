@@ -184,9 +184,35 @@ function Parents() {
   const addParentApi = async (parentData) => {
     try {
       const newParent = await addParent(parentData);
-      console.log("Parent added:", newParent);
+
+      if (newParent) {
+        await fetchParents();
+
+        Swal.fire({
+          icon: "success",
+          title: "تمت الاضافة بنجاح",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        onClose();
+        setIsParent(false);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "حدث خطأ أثناء إضافة الوالد",
+          text: "يرجى المحاولة مرة أخرى",
+          showConfirmButton: true,
+        });
+      }
     } catch (error) {
       console.error("Error adding parent:", error);
+      Swal.fire({
+        icon: "error",
+        title: "حدث خطأ أثناء إضافة الوالد",
+        text: "يرجى المحاولة مرة أخرى",
+        showConfirmButton: true,
+      });
     }
   };
 
@@ -221,16 +247,6 @@ function Parents() {
           };
 
           await addParentApi(parentData);
-          await fetchParents();
-
-          Swal.fire({
-            icon: "success",
-            title: "تمت الاضافة بنجاح",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          onClose();
-          setIsParent(false);
         }
       }
     } catch (error) {
@@ -357,7 +373,7 @@ function Parents() {
               />
               <Input
                 className="my-2"
-                type="text"
+                type="number"
                 name="phoneNumber"
                 placeholder="رقم الولي"
                 required

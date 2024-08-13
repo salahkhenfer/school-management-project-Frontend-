@@ -7,6 +7,9 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { checkauth, selectAuth } from "./Redux/slices/authSlice";
 import { checkauthApi } from "./apiCalls/authCalls";
+import ParentsPage from "./parents/ParentsPage";
+import TeachersPage from "./teachers/TeachersPage";
+import TeacherSideBar from "./components/teachersComponents/TeacherSideBar";
 
 function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -38,22 +41,40 @@ function App() {
   if (!user) {
     return <Navigate to="/login" />;
   }
-
-  return (
-    <div className="font-cairo">
-      <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />
-      <div className="flex">
-        <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
-        <div
-          className="pt-20 
+  if (user.role === "admin" || user.role === "superAdmin") {
+    return (
+      <div className="font-cairo">
+        <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />
+        <div className="flex">
+          <SideBar isOpen={isOpen} setIsOpen={setIsOpen} />
+          <div
+            className="pt-20 
           h-[calc(100vh-1rem)]
           overflow-y-scroll w-full px-4 "
-        >
-          <Outlet />
+          >
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  } else if (user.role === "teacher") {
+    return <Navigate to="/teachers" />;
+  } else if (user.role === "parent") {
+    return (
+      <div className="font-cairo">
+        <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />
+        <div className="flex">
+          <div
+            className="pt-20 
+          h-[calc(100vh-1rem)]
+          overflow-y-scroll w-full px-4 "
+          >
+            <ParentsPage />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;

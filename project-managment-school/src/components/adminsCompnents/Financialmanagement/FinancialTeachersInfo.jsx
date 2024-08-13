@@ -18,6 +18,8 @@ import { getPaymentByGroup } from "../../../apiCalls/patmentCalls";
 import { getGroupById } from "../../../apiCalls/GroupsCals";
 import { addPaymentTeacher } from "../../../apiCalls/PaymentsTeacher";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../Redux/slices/authSlice";
 
 function FinancialTeachersInfo() {
   const { FinancialTeachersParams } = useParams();
@@ -26,6 +28,8 @@ function FinancialTeachersInfo() {
   const [group, setGroup] = useState({});
   const [studentsPayment, setStudentsPayment] = useState([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
+  const { user } = useSelector(selectAuth);
+
   const [completedGroupsWithPayments, setCompletedGroupsWithPayments] =
     useState([]);
 
@@ -35,7 +39,7 @@ function FinancialTeachersInfo() {
     try {
       setLoadingGroups(true);
 
-      const response = await getTeacherById(FinancialTeachersParams);
+      const response = await getTeacherById(FinancialTeachersParams || user.id);
       console.log(response);
 
       setFinancialTeachers(response);
@@ -98,7 +102,7 @@ function FinancialTeachersInfo() {
 
   const handlePayment = async (amount) => {
     const response = await addPaymentTeacher(
-      parseInt(FinancialTeachersParams),
+      parseInt(FinancialTeachersParams || user.id),
       group.id,
       amount
     );
@@ -122,34 +126,37 @@ function FinancialTeachersInfo() {
 
   const renderTable = () => (
     <div>
-      {group.groupPayments ? (
-        <div>
-          <Button className="mt-4" disabled auto>
-            تم دفع المبلغ والمقدر ب : {group.groupPayments.amount} دينار جزائري
-          </Button>
-        </div>
-      ) : (
-        <div>
-          <h1
-            style={{
-              fontSize: "20px",
-              color: "rgb(0, 0, 0)",
-              fontWeight: "bold",
-            }}
-          >
-            المبلغ الكلي للفوج : DZD {getTotalamount(studentsPayment)}
-          </h1>
-          <Button
-            onClick={() => {
-              handlePayment(getTotalamount(studentsPayment));
-            }}
-            color="success"
-            className="mt-4 text-white"
-          >
-            دفع المبلغ
-          </Button>
-        </div>
-      )}
+      {FinancialTeachersParams ? (
+        group.groupPayments ? (
+          <div>
+            <Button className="mt-4" disabled auto>
+              تم دفع المبلغ والمقدر ب : {group.groupPayments.amount} دينار
+              جزائري
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <h1
+              style={{
+                fontSize: "20px",
+                color: "rgb(0, 0, 0)",
+                fontWeight: "bold",
+              }}
+            >
+              المبلغ الكلي للفوج : DZD {getTotalamount(studentsPayment)}
+            </h1>
+            <Button
+              onClick={() => {
+                handlePayment(getTotalamount(studentsPayment));
+              }}
+              color="success"
+              className="mt-4 text-white"
+            >
+              دفع المبلغ
+            </Button>
+          </div>
+        )
+      ) : null}
       <Table className="min-h-[60vh]" isHeaderSticky>
         <TableHeader>
           <TableColumn key="id">رمز التلميذ</TableColumn>

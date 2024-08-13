@@ -64,7 +64,7 @@ function TeacherInfo() {
     <div>
       <div className="md:flex justify-start gap-10 items-start">
         <div className="md:w-1/2">
-          <h1 className="text-2xl font-bold my-5">معلومات الولي</h1>
+          <h1 className="text-2xl font-bold my-5">معلومات الاستاذ</h1>
 
           <div className="mb-4">
             <label
@@ -141,7 +141,7 @@ function TeacherInfo() {
           </div>
         </div>
         <div>
-          <h1 className="text-2xl font-bold my-5">اسماء الابناء المسجلين</h1>
+          <h1 className="text-2xl font-bold my-5"> الافواج</h1>
           {Teacher?.groups?.map((group) => (
             <div
               key={group.id}
@@ -151,7 +151,6 @@ function TeacherInfo() {
                 <div className="text-right text-gray-800 text-2xl font-semibold font-['Cairo'] leading-9">
                   {group.name}
                 </div>
-                
               </div>
             </div>
           ))}

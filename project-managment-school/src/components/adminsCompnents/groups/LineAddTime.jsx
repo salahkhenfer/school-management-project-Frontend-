@@ -30,6 +30,7 @@ function LineAddTime({
   group,
   lines,
   setLines,
+  teacher,
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [roomIsAvilabel, setRoomIsAvilabel] = useState(false);
@@ -246,20 +247,21 @@ function LineAddTime({
                 </Autocomplete>
               )}
             </Field>
-
-            <Button
-              className="w-1/2 px-10"
-              color="primary"
-              startContent={<FaCheck />}
-              isDisabled={isDisabled}
-              onClick={() => handleSearchRoom(values)}
-            >
-              {LoadingRoom ? (
-                <Spinner color="white" />
-              ) : (
-                <div>بحث عن القاعة</div>
-              )}
-            </Button>
+            {!teacher && (
+              <Button
+                className="w-1/2 px-10"
+                color="primary"
+                startContent={<FaCheck />}
+                isDisabled={isDisabled}
+                onClick={() => handleSearchRoom(values)}
+              >
+                {LoadingRoom ? (
+                  <Spinner color="white" />
+                ) : (
+                  <div>بحث عن القاعة</div>
+                )}
+              </Button>
+            )}
             {roomIsAvilabel && !LoadingRoom && (
               <Field name="location">
                 {({ field }) => (
@@ -290,37 +292,39 @@ function LineAddTime({
               </Field>
             )}
 
-            <div className="flex gap-3">
-              <Button
-                color="danger"
-                startContent={<MdDelete />}
-                onClick={() => handleRemove(id)}
-              ></Button>
-              {!isDisabled ? (
-                roomIsAvilabel &&
-                values.timeFrom &&
-                values.timeTo &&
-                values.day &&
-                values.location &&
-                values.regiment && (
-                  <Button
-                    type="submit"
-                    className="text-white"
-                    color="success"
-                    variant="solid"
-                    startContent={<FaCheck />}
-                  ></Button>
-                )
-              ) : (
+            {!teacher && (
+              <div className="flex gap-3">
                 <Button
-                  onClick={handelAddSchedule}
-                  className="text-white"
-                  color="warning"
-                  variant="solid"
-                  startContent={<FaEdit />}
+                  color="danger"
+                  startContent={<MdDelete />}
+                  onClick={() => handleRemove(id)}
                 ></Button>
-              )}
-            </div>
+                {!isDisabled ? (
+                  roomIsAvilabel &&
+                  values.timeFrom &&
+                  values.timeTo &&
+                  values.day &&
+                  values.location &&
+                  values.regiment && (
+                    <Button
+                      type="submit"
+                      className="text-white"
+                      color="success"
+                      variant="solid"
+                      startContent={<FaCheck />}
+                    ></Button>
+                  )
+                ) : (
+                  <Button
+                    onClick={handelAddSchedule}
+                    className="text-white"
+                    color="warning"
+                    variant="solid"
+                    startContent={<FaEdit />}
+                  ></Button>
+                )}
+              </div>
+            )}
           </div>
         </Form>
       )}

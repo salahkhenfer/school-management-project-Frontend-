@@ -40,6 +40,8 @@ function Groups() {
   const [loadingGroups, setLoadingGroups] = useState(true);
   const [data, setData] = useState([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [listFilter, setListFilter] = useState([]);
+  const [orignalList, setOrignalList] = useState([]);
 
   const transformValues = (values) => {
     const paymentMethod =
@@ -56,6 +58,7 @@ function Groups() {
       theRest: pathname,
       type: type,
       paymentMethod: paymentMethod,
+      price: values.price,
     };
   };
   function formatDate(date) {
@@ -89,10 +92,19 @@ function Groups() {
 
   const fetchGroups = async (pathname) => {
     setLoadingGroups(true);
-    const newList = await getGroups(pathname);
-    setList(() => newList);
-    console.log(newList);
-    setLoadingGroups(false);
+
+    try {
+      const newList = await getGroups(pathname);
+
+      setList(newList); // Directly set the new list
+      setOrignalList(newList); // Set the original list
+
+      console.log(newList);
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    } finally {
+      setLoadingGroups(false);
+    }
   };
 
   useEffect(() => {
@@ -153,7 +165,24 @@ function Groups() {
     price: Yup.number(),
     numberOfSessions: Yup.number().required("عدد الحصص مطلوب"),
   });
+  const [selectedFilter, setSelectedFilter] = useState("all");
 
+  const filterGroups = (filter) => {
+    switch (filter) {
+      case "complete":
+        setList(orignalList.filter((group) => group.isCompleted));
+        break;
+      case "incomplete":
+        setList(orignalList.filter((group) => !group.isCompleted));
+        break;
+      default:
+        setList(orignalList);
+    }
+  };
+
+  useEffect(() => {
+    filterGroups(selectedFilter);
+  }, [selectedFilter]);
   return (
     <div className="p-5 relative ">
       <div
@@ -170,15 +199,27 @@ function Groups() {
           الافواج
         </div>
 
-        <div className="flex  w-full flex-wrap justify-end items-end md:flex-nowrap  md:mb-0 gap-4">
+        <div className="flex w-full flex-wrap justify-end items-end md:flex-nowrap md:mb-0 gap-4">
           <Select
-            defaultSelectedKeys={["الافواج المكتملة"]}
-            placeholder="الافواج المكتملة"
+            label="فلترة الافواج"
+            placeholder="اختر الفلتر"
+            selectedKeys={[selectedFilter]}
             className="max-w-xs"
-            selectedKeys={["الافواج المكتملة"]}
+            onChange={(e) => setSelectedFilter(e.target.value)}
           >
-            <SelectItem>الافواج المكتملة</SelectItem>
-            <SelectItem>الغير الغير مكتملة</SelectItem>
+            <SelectItem key="all" value="all">
+              كل الافواج
+            </SelectItem>
+            <SelectItem key="complete" value="complete">
+              الافواج المكتملة
+            </SelectItem>
+            <SelectItem
+              onClick={() => filterGroups("incomplete")}
+              key="incomplete"
+              value="incomplete"
+            >
+              الافواج الغير مكتملة
+            </SelectItem>
           </Select>
         </div>
       </div>
@@ -208,7 +249,7 @@ function Groups() {
           <TableBody items={list}>
             {(item) => (
               <TableRow
-                key={item.name}
+                key={item.id}
                 onClick={() => handleClickGroup(item)}
                 className=" hover:bg-gray-100
             border-b-2

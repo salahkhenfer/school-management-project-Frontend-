@@ -11,18 +11,20 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LogoutApi } from "../../../apiCalls/authCalls";
-import { checkauth, logout } from "../../../Redux/slices/authSlice";
+import { checkauth, logout, selectAuth } from "../../../Redux/slices/authSlice";
 
 function Header({ isOpen, setIsOpen }) {
   // eslint-disable-next-line no-unused-vars
   const [isInvisible, setIsInvisible] = useState(false);
   const dispatch = useDispatch();
+  const { user } = useSelector(selectAuth);
+
   const handelLogout = async () => {
-    LogoutApi();
+    const res = await LogoutApi();
+    console.log(res);
     await dispatch(logout());
-    dispatch(checkauth());
   };
 
   return (
@@ -32,24 +34,18 @@ function Header({ isOpen, setIsOpen }) {
       </div>
       <img className="w-14 h-14" src={logo} alt="" />
       <div className="  flex justify-center md:gap-6 items-center">
-        <Badge
-          color="danger"
-          className="max-md:hidden"
-          content={2}
-          isInvisible={isInvisible}
-          shape="circle"
-        >
-          <BiMessageDetail className="w-6 max-md:hidden h-6 cursor-pointer " />
-        </Badge>
-        <Badge
-          className="max-md:hidden"
-          color="danger"
-          content={5}
-          isInvisible={isInvisible}
-          shape="circle"
-        >
-          <IoNotificationsOutline className="w-6 max-md:hidden h-6 cursor-pointer " />
-        </Badge>
+        {user?.role === "admin" && (
+          <Badge
+            color="danger"
+            className="max-md:hidden"
+            content={2}
+            isInvisible={isInvisible}
+            shape="circle"
+          >
+            <BiMessageDetail className="w-6 max-md:hidden h-6 cursor-pointer " />
+          </Badge>
+        )}
+
         <div className="flex items-center">
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -66,7 +62,7 @@ function Header({ isOpen, setIsOpen }) {
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
                 <p className="font-semibold">اسم الحساب </p>
-                <p className="font-semibold">محمد</p>
+                <p className="font-semibold">{user?.name}</p>
               </DropdownItem>
               <DropdownItem key="settings">الصفحة الرئيسة</DropdownItem>
               <DropdownItem onClick={handelLogout} key="logout" color="danger">

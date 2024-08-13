@@ -124,7 +124,21 @@ const updateGroup = async (group) => {
     console.error("Failed to update group:", err);
   }
 };
-
+const getGroupByTeacher = async (teacherId) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/groups/getGroupByTeacher",
+      { teacherId },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data.groups;
+  } catch (err) {
+    console.error("Failed to get group:", err);
+  }
+};
 export {
   getGroups,
   addGroupApi,
@@ -132,4 +146,5 @@ export {
   deleteGroup,
   updateGroupStatus,
   updateGroup,
+  getGroupByTeacher,
 };
