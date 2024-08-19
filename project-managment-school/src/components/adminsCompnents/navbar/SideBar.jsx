@@ -1,6 +1,50 @@
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { getUserByIdApi } from "../../../apiCalls/authCalls";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../Redux/slices/authSlice";
 
 function SideBar({ isOpen, setIsOpen }) {
+  const [userNew, setUserNew] = useState(null);
+  const { user } = useSelector(selectAuth);
+
+  const fetchUser = async () => {
+    try {
+      const userData = await getUserByIdApi(user.id);
+      setUserNew(userData);
+      console.log(userData);
+    } catch (err) {
+      console.error("Error checking authentication status:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const checkPermission = (permissionType) =>
+    userNew?.permissions.some(
+      (perm) => perm.permissionType === permissionType
+    ) || userNew?.role === "admin";
+
+  const hasClassPermission = checkPermission("classes");
+  const hasAdditionalPermission = checkPermission("users");
+  const hasFinancialPermission = checkPermission("financial");
+
+  const NavLinkWrapper = ({ to, children }) => (
+    <NavLink
+      to={to}
+      onClick={() => setIsOpen(false)}
+      className={({ isActive }) =>
+        `px-4 py-1 rounded-lg cursor-pointer ${
+          isActive ? "bg-gray-300" : "hover:bg-gray-200"
+        }`
+      }
+    >
+      {children}
+    </NavLink>
+  );
+
   return (
     <div
       className={`w-80 
@@ -9,136 +53,41 @@ function SideBar({ isOpen, setIsOpen }) {
     >
       <div className="font-bold rounded-lg">الصفحة الرئيسة</div>
       <div className="w-full flex flex-col">
-        <NavLink
-          exact
-          to="/"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 w-full rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          الاحصائيات
-        </NavLink>
+        <NavLinkWrapper to="/">الاحصائيات</NavLinkWrapper>
       </div>
-      <div className="flex flex-col">
-        <div className="font-bold py-2">الاقسام والدورات</div>
-        <NavLink
-          to="classes/Languages"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          اللغات
-        </NavLink>
-        <NavLink
-          to="classes/Courses"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          الدورات
-        </NavLink>
-        <NavLink
-          to="classes/Levels"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          المستويات
-        </NavLink>
-      </div>
-      <div className="flex flex-col">
-        <div className="font-bold py-2">المستخدمين والإضافات</div>
-        <NavLink
-          to="/additional/Students"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 py-1 w-full rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          التلاميذ
-        </NavLink>
-        <NavLink
-          to="/additional/Teachers"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 w-full py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          الأساتذة
-        </NavLink>
-        <NavLink
-          to="/additional/Parents"
-          onClick={() => setIsOpen(false)}
-          className={({ isActive }) =>
-            `px-4 w-full py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          أولياء التلاميذ
-        </NavLink>
-      </div>
-      <div className="flex flex-col">
-        <div className="font-bold py-2">التسيير المالي</div>
-        <NavLink
-          to="/Financialmanagement"
-          className={({ isActive }) =>
-            `px-4 py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          الأستاذ
-        </NavLink>
-        <NavLink
-          to="/FinancialEmployer"
-          className={({ isActive }) =>
-            `px-4 py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          العمال
-        </NavLink>
-      </div>
+
+      {hasClassPermission && (
+        <div className="flex flex-col">
+          <div className="font-bold py-2">الاقسام والدورات</div>
+          <NavLinkWrapper to="classes/Languages">اللغات</NavLinkWrapper>
+          <NavLinkWrapper to="classes/Courses">الدورات</NavLinkWrapper>
+          <NavLinkWrapper to="classes/Levels">المستويات</NavLinkWrapper>
+        </div>
+      )}
+
+      {hasAdditionalPermission && (
+        <div className="flex flex-col">
+          <div className="font-bold py-2">المستخدمين والإضافات</div>
+          <NavLinkWrapper to="/additional/Students">التلاميذ</NavLinkWrapper>
+          <NavLinkWrapper to="/additional/Teachers">الأساتذة</NavLinkWrapper>
+          <NavLinkWrapper to="/additional/Parents">
+            أولياء التلاميذ
+          </NavLinkWrapper>
+        </div>
+      )}
+
+      {hasFinancialPermission && (
+        <div className="flex flex-col">
+          <div className="font-bold py-2">التسيير المالي</div>
+          <NavLinkWrapper to="/Financialmanagement">الأستاذ</NavLinkWrapper>
+          <NavLinkWrapper to="/FinancialEmployer">العمال</NavLinkWrapper>
+        </div>
+      )}
+
       <div className="flex flex-col">
         <div className="font-bold px-2">التحكم في الموقع</div>
-        <NavLink
-          to="/Permission"
-          className={({ isActive }) =>
-            `px-4 py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          تحديد الصلاحيات
-        </NavLink>
-        <NavLink
-          to="/additionalWebSite"
-          className={({ isActive }) =>
-            `px-4 py-1 rounded-lg cursor-pointer ${
-              isActive ? "bg-gray-300" : "hover:bg-gray-200"
-            }`
-          }
-        >
-          إضافات الموقع
-        </NavLink>
+        <NavLinkWrapper to="/Permission">تحديد الصلاحيات</NavLinkWrapper>
+        <NavLinkWrapper to="/additionalWebSite">إضافات الموقع</NavLinkWrapper>
       </div>
     </div>
   );

@@ -157,7 +157,7 @@ function FinancialTeachers() {
           )}
         </div>
       )}
-      <Modal
+      {/* <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         scrollBehavior="inside"
@@ -334,7 +334,7 @@ function FinancialTeachers() {
             </div>
           )}
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

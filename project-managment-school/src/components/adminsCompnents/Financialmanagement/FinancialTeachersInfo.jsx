@@ -76,7 +76,7 @@ function FinancialTeachersInfo() {
     const paymentStudents = response.map((student) => {
       return {
         id: student.id,
-        student: student.student.fullName,
+        student: student.student?.fullName,
         amount: student.amount,
         type: group.type,
         total: calculateTotal(student.amount, group.type),
@@ -127,10 +127,10 @@ function FinancialTeachersInfo() {
   const renderTable = () => (
     <div>
       {FinancialTeachersParams ? (
-        group.groupPayments ? (
+        group?.groupPayments ? (
           <div>
             <Button className="mt-4" disabled auto>
-              تم دفع المبلغ والمقدر ب : {group.groupPayments.amount} دينار
+              تم دفع المبلغ والمقدر ب : {group?.groupPayments?.amount} دينار
               جزائري
             </Button>
           </div>
@@ -310,7 +310,7 @@ function FinancialTeachersInfo() {
           fontWeight: "bold",
         }}
       >
-        الاستاذ: {FinancialTeachers.fullName}
+        الاستاذ: {FinancialTeachers?.fullName}
       </h1>
       <div className="flex justify-between items-center">
         <h1

@@ -36,6 +36,7 @@ import {
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../Redux/slices/authSlice";
+import { getTeacherWithUser } from "../../apiCalls/teacherCalls";
 
 function TeacherGroups() {
   const nav = useNavigate();
@@ -49,8 +50,10 @@ function TeacherGroups() {
     setLoadingGroups(true);
 
     try {
-      const newList = await getGroupByTeacher(15); // Fetch the list of groups
-      const reversedList = [...newList].reverse(); // Reverse the list once
+      const newList = await getTeacherWithUser(user); // Fetch the list of groups
+      console.log(newList);
+
+      const reversedList = [...newList.groups].reverse(); // Reverse the list once
 
       setList(reversedList); // Set the reversed list
       setOrignalList(reversedList); // Set the reversed list for original list

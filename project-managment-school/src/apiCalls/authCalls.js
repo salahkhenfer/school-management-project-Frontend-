@@ -53,3 +53,20 @@ export const LogoutApi = async () => {
     console.error("Failed to logout:", err);
   }
 };
+export const getUserByIdApi = async (id) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/auth/getUserById",
+      {
+        id: id,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to get user:", err);
+  }
+};

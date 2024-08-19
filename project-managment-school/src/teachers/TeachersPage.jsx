@@ -6,6 +6,7 @@ import TeacherSideBar from "../components/teachersComponents/TeacherSideBar";
 import { checkauthApi } from "../apiCalls/authCalls";
 import { useDispatch, useSelector } from "react-redux";
 import { checkauth, selectAuth } from "../Redux/slices/authSlice";
+import { getTeacherWithUser } from "../apiCalls/teacherCalls";
 
 function TeachersPage() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -14,6 +15,15 @@ function TeachersPage() {
   const dispatch = useDispatch();
   const nav = useNavigate();
 
+  const fetchGroups = async () => {
+    try {
+      const newList = await getTeacherWithUser(user); // Fetch the list of groups
+      console.log(newList);
+      dispatch(checkauth(newList));
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  };
   useEffect(() => {
     const fetchAuthStatus = async () => {
       try {
@@ -27,7 +37,10 @@ function TeachersPage() {
     };
 
     fetchAuthStatus();
-  }, [dispatch]);
+    if (user.role === "teacher") {
+      fetchGroups();
+    }
+  }, []);
   if (!user) {
     return <Navigate to="/login" />;
   }

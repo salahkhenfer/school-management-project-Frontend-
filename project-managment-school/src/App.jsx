@@ -25,7 +25,8 @@ function App() {
         const userData = await checkauthApi();
         dispatch(checkauth(userData.user));
       } catch (err) {
-        console.error("Error checking authentication status:", err);
+        dispatch(checkauth(null));
+        nav("/login");
       } finally {
         setLoading(false);
       }
@@ -41,7 +42,7 @@ function App() {
   if (!user) {
     return <Navigate to="/login" />;
   }
-  if (user.role === "admin" || user.role === "superAdmin") {
+  if (user.role === "admin" || user.role === "sub-admin") {
     return (
       <div className="font-cairo">
         <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />
@@ -60,20 +61,7 @@ function App() {
   } else if (user.role === "teacher") {
     return <Navigate to="/teachers" />;
   } else if (user.role === "parent") {
-    return (
-      <div className="font-cairo">
-        <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />
-        <div className="flex">
-          <div
-            className="pt-20 
-          h-[calc(100vh-1rem)]
-          overflow-y-scroll w-full px-4 "
-          >
-            <ParentsPage />
-          </div>
-        </div>
-      </div>
-    );
+    return <Navigate to="/parents" />;
   }
 }
 

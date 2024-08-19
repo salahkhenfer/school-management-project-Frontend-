@@ -175,6 +175,27 @@ const countParentsApi = async () => {
     console.error("Failed to count parent:", err);
   }
 };
+
+const getParentWithUser = async (user) => {
+  console.log(user);
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/parents/getParentWithUser",
+      {
+        name: user.name,
+        email: user.email,
+        phoneNumber: user.phone,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data.parent);
+    return response.data.parent;
+  } catch (err) {
+    console.error("Failed to get parent with user:", err);
+  }
+};
 export {
   addParent,
   searchParent,
@@ -186,4 +207,5 @@ export {
   checkParentApi,
   deleteStudentFormParent,
   countParentsApi,
+  getParentWithUser,
 };

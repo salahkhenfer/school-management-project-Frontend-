@@ -14,17 +14,20 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LogoutApi } from "../../../apiCalls/authCalls";
 import { checkauth, logout, selectAuth } from "../../../Redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Header({ isOpen, setIsOpen }) {
   // eslint-disable-next-line no-unused-vars
   const [isInvisible, setIsInvisible] = useState(false);
   const dispatch = useDispatch();
   const { user } = useSelector(selectAuth);
+  const nav = useNavigate();
 
   const handelLogout = async () => {
     const res = await LogoutApi();
     console.log(res);
     await dispatch(logout());
+    nav("/login");
   };
 
   return (
@@ -38,11 +41,16 @@ function Header({ isOpen, setIsOpen }) {
           <Badge
             color="danger"
             className="max-md:hidden"
-            content={2}
+            content={""}
             isInvisible={isInvisible}
             shape="circle"
           >
-            <BiMessageDetail className="w-6 max-md:hidden h-6 cursor-pointer " />
+            <BiMessageDetail
+              onClick={() => {
+                nav("/messages");
+              }}
+              className="w-6 max-md:hidden h-6 cursor-pointer "
+            />
           </Badge>
         )}
 

@@ -27,6 +27,10 @@ import AllUsersPermission from "./admins/permissions/AllUsersPermission";
 import TeachersPage from "./teachers/TeachersPage";
 import TeacherGroups from "./teachers/TeacherGroups/TeacherGroups";
 import TeacherGoupe from "./teachers/TeacherGroups/TeacherGoupe";
+import ParentsPage from "./parents/ParentsPage";
+import StudentsGroups from "./parents/parentStudentsGroup/StudentsGroups";
+import SendReport from "./parents/parentStudentsGroup/SendReport";
+import MessagesAdmin from "./components/adminsCompnents/MessagesAdmin";
 
 const routes = createBrowserRouter([
   {
@@ -151,6 +155,10 @@ const routes = createBrowserRouter([
         path: "/Permission/AllUsersPermission",
         element: <AllUsersPermission />,
       },
+      {
+        path: "/messages",
+        element: <MessagesAdmin />,
+      },
     ],
   },
   {
@@ -173,6 +181,24 @@ const routes = createBrowserRouter([
       {
         path: "FinancialTeacher/TransitionDone",
         element: <TransitionDone />,
+      },
+    ],
+  },
+  {
+    path: "/parents",
+    element: <ParentsPage />,
+    children: [
+      {
+        index: true,
+        element: <StudentsGroups />,
+      },
+      {
+        path: ":studentParams",
+        element: <StudentsInfo />,
+      },
+      {
+        path: "sendReport",
+        element: <SendReport />,
       },
     ],
   },

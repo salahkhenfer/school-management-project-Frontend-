@@ -95,9 +95,9 @@ function Groups() {
 
     try {
       const newList = await getGroups(pathname);
-
-      setList(newList); // Directly set the new list
-      setOrignalList(newList); // Set the original list
+      const reversedList = [...newList].reverse();
+      setList(reversedList); // Directly set the new list
+      setOrignalList(reversedList); // Set the original list
 
       console.log(newList);
     } catch (error) {

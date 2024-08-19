@@ -104,6 +104,22 @@ const countTeachers = async () => {
     return false;
   }
 };
+
+const getTeacherWithUser = async (id) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/teachers/getTeacherWithUser",
+      id,
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to get teacher:", err);
+  }
+};
 export {
   getAllTeachers,
   addTeacherApi,
@@ -111,4 +127,5 @@ export {
   getTeacherById,
   searchTeacherApi,
   countTeachers,
+  getTeacherWithUser,
 };
