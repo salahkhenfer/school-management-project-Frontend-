@@ -1,10 +1,9 @@
 import axios from "axios";
-import Swal from "sweetalert2";
 
 const addParent = async (parent) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/parents/addParent",
+      "http://servertest.eltatwir.com/api/parents/addParent",
       {
         fullName: parent.fullName,
         phoneNumber: parent.phoneNumber,
@@ -27,7 +26,7 @@ const addParent = async (parent) => {
 const addStudentInToParent = async (phoneNumber, studentId = "") => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/parents/addStudentInToParent",
+      "http://servertest.eltatwir.com/api/parents/addStudentInToParent",
       {
         studentId: studentId,
         phoneNumber,
@@ -46,7 +45,7 @@ const addStudentInToParent = async (phoneNumber, studentId = "") => {
 const deleteStudentForParent = async (info) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/parents/deleteStudentForParent",
+      "http://servertest.eltatwir.com/api/parents/deleteStudentForParent",
 
       {
         data: info,
@@ -62,7 +61,7 @@ const deleteStudentForParent = async (info) => {
 const getAllParents = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/parents/getAllParents",
+      "http://servertest.eltatwir.com/api/parents/getAllParents",
       {
         withCredentials: true,
       }
@@ -77,7 +76,7 @@ const getAllParents = async () => {
 const searchParent = async (name) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/parents/searchParent`,
+      `http://servertest.eltatwir.com/api/parents/searchParent`,
       {
         name: name,
       },
@@ -94,7 +93,7 @@ const searchParent = async (name) => {
 const deleteParentApi = async (info) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/parents/deleteParent",
+      "http://servertest.eltatwir.com/api/parents/deleteParent",
 
       {
         data: info,
@@ -111,7 +110,7 @@ const deleteParentApi = async (info) => {
 const getParentById = async (id) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/parents/getParentById`,
+      `http://servertest.eltatwir.com/api/parents/getParentById`,
       {
         id: id,
       },
@@ -129,7 +128,7 @@ const getParentById = async (id) => {
 const checkParentApi = async (phoneNumber) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/parents/checkParent",
+      "http://servertest.eltatwir.com/api/parents/checkParent",
       {
         phoneNumber: phoneNumber,
       },
@@ -148,7 +147,7 @@ const checkParentApi = async (phoneNumber) => {
 const deleteStudentFormParent = async (info) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/parents/deleteStudentFormParent",
+      "http://servertest.eltatwir.com/api/parents/deleteStudentFormParent",
       {
         data: info,
         withCredentials: true,
@@ -164,7 +163,7 @@ const deleteStudentFormParent = async (info) => {
 const countParentsApi = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/parents/countParents",
+      "http://servertest.eltatwir.com/api/parents/countParents",
       {
         withCredentials: true,
       }
@@ -180,7 +179,7 @@ const getParentWithUser = async (user) => {
   console.log(user);
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/parents/getParentWithUser",
+      "http://servertest.eltatwir.com/api/parents/getParentWithUser",
       {
         name: user.name,
         email: user.email,
@@ -198,14 +197,14 @@ const getParentWithUser = async (user) => {
 };
 export {
   addParent,
-  searchParent,
   addStudentInToParent,
-  deleteStudentForParent,
-  getAllParents,
-  deleteParentApi,
-  getParentById,
   checkParentApi,
-  deleteStudentFormParent,
   countParentsApi,
+  deleteParentApi,
+  deleteStudentForParent,
+  deleteStudentFormParent,
+  getAllParents,
+  getParentById,
   getParentWithUser,
+  searchParent,
 };

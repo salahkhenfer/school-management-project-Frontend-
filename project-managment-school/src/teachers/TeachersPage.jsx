@@ -15,35 +15,22 @@ function TeachersPage() {
   const dispatch = useDispatch();
   const nav = useNavigate();
 
-  const fetchGroups = async () => {
-    try {
-      const newList = await getTeacherWithUser(user); // Fetch the list of groups
-      console.log(newList);
-      dispatch(checkauth(newList));
-    } catch (error) {
-      console.error("Error fetching groups:", error);
-    }
-  };
-  useEffect(() => {
-    const fetchAuthStatus = async () => {
-      try {
-        const userData = await checkauthApi();
-        dispatch(checkauth(userData.user));
-      } catch (err) {
-        console.error("Error checking authentication status:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // const fetchGroups = async () => {
+  //   try {
+  //     console.log("Fetching groups... ,", user);
+  //     const newList = await getTeacherWithUser(user); // Fetch the list of groups
+  //     console.log(newList);
+  //     if (newList) {
+  //       dispatch(checkauth(newList));
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching groups:", error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchGroups();
+  // }, []);
 
-    fetchAuthStatus();
-    if (user.role === "teacher") {
-      fetchGroups();
-    }
-  }, []);
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
   return (
     <div className="font-cairo">
       <Header isOpen={isOpen} setIsOpen={() => setIsOpen(!isOpen)} />

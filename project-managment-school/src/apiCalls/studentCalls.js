@@ -1,10 +1,9 @@
-import { data } from "autoprefixer";
 import axios from "axios";
 
 const deleteStudent = async (id) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/students/deleteStudent",
+      "http://servertest.eltatwir.com/api/students/deleteStudent",
       {
         data: { id: id },
         withCredentials: true,
@@ -20,14 +19,14 @@ const deleteStudent = async (id) => {
 const getAllStudent = async (page) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/getAllStudents",
-      { page: page },
+      "http://servertest.eltatwir.com/api/students/getAllStudents",
+
       {
         withCredentials: true,
       }
     );
     console.log(response.data);
-    return response.data.students; // افتراض أن `response.data` يحتوي على الحقول `students` و `totalStudents`
+    return response.data; // افتراض أن `response.data` يحتوي على الحقول `students` و `totalStudents`
   } catch (err) {
     console.error("Failed to get all students:", err);
   }
@@ -35,7 +34,7 @@ const getAllStudent = async (page) => {
 const getStudentById = async (id) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/getStudentById",
+      "http://servertest.eltatwir.com/api/students/getStudentById",
       {
         id: id,
       },
@@ -53,7 +52,7 @@ const getStudentById = async (id) => {
 const addStudent = async (student) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/addStudent",
+      "http://servertest.eltatwir.com/api/students/addStudent",
       student,
       {
         withCredentials: true,
@@ -69,7 +68,7 @@ const addStudent = async (student) => {
 const searchStudentApi = async (name) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/searchStudent",
+      "http://servertest.eltatwir.com/api/students/searchStudent",
       {
         fullName: name,
       },
@@ -88,7 +87,7 @@ const searchStudentApi = async (name) => {
 const countStudents = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/students/countStudents",
+      "http://servertest.eltatwir.com/api/students/countStudents",
       {
         withCredentials: true,
       }
@@ -102,7 +101,7 @@ const countStudents = async () => {
 const deleteStudentFropmGroup = async (studentId, groupId) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/students/deleteStudentFropmGroup",
+      "http://servertest.eltatwir.com/api/students/deleteStudentFropmGroup",
       {
         data: {
           studentId: studentId,
@@ -120,11 +119,11 @@ const deleteStudentFropmGroup = async (studentId, groupId) => {
 };
 
 export {
+  addStudent,
+  countStudents,
   deleteStudent,
+  deleteStudentFropmGroup,
   getAllStudent,
   getStudentById,
-  addStudent,
   searchStudentApi,
-  countStudents,
-  deleteStudentFropmGroup,
 };

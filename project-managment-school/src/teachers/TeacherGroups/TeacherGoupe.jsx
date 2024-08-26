@@ -2,8 +2,6 @@ import {
   Button,
   Chip,
   getKeyValue,
-  Modal,
-  ModalContent,
   Spinner,
   Table,
   TableBody,
@@ -11,58 +9,28 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure,
 } from "@nextui-org/react";
-import { FaCheck, FaDownload, FaEdit, FaPrint, FaTimes } from "react-icons/fa";
-import { MdDelete, MdEdit, MdWidthFull } from "react-icons/md";
-import LineAddTime from "../../components/adminsCompnents/groups/LineAddTime";
-import { IoAdd } from "react-icons/io5";
+import "jspdf-autotable";
+
 import { useEffect, useState } from "react";
+import { BiCheck } from "react-icons/bi";
+import { FaCheck, FaDownload, FaPrint, FaTimes } from "react-icons/fa";
+import { IoAdd } from "react-icons/io5";
+import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import {
-  Input,
-  DatePicker,
-  Autocomplete,
-  AutocompleteItem,
-  RadioGroup,
-  Radio,
-} from "@nextui-org/react";
-import {
-  deleteGroup,
-  getGroupById,
-  updateGroup,
-  updateGroupStatus,
-} from "../../apiCalls/GroupsCals";
-import { useParams } from "react-router-dom";
-import "jspdf-autotable";
-import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+import { getGroupById, updateGroupStatus } from "../../apiCalls/GroupsCals";
 import { getSchedule } from "../../apiCalls/scheduleCalls";
-import {
-  deleteStudent,
-  deleteStudentFropmGroup,
-} from "../../apiCalls/studentCalls";
-import { getAllTeachers } from "../../apiCalls/teacherCalls";
-import { useLocation } from "react-router-dom";
-import * as Yup from "yup";
-import { id } from "date-fns/locale";
-import { BiCheck } from "react-icons/bi";
 import { addSessionToGroup, getSession } from "../../apiCalls/sessionCalls";
+import { deleteStudentFropmGroup } from "../../apiCalls/studentCalls";
+import { getAllTeachers } from "../../apiCalls/teacherCalls";
+import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
+import LineAddTime from "../../components/adminsCompnents/groups/LineAddTime";
 
-pdfMake.vfs = {
-  ...pdfFonts.pdfMake.vfs,
-  "Cairo-Regular.ttf": font,
-};
+import pdfMake from "pdfmake/build/pdfmake";
+import { format } from "date-fns/format";
 
-pdfMake.fonts = {
-  Cairo: {
-    normal: "Cairo-Regular.ttf",
-    bold: "Cairo-Regular.ttf",
-  },
-};
+// Now you can use pdfMake as usual
 
 function TeacherGoupe() {
   const [group, setGroup] = useState({});
@@ -286,7 +254,17 @@ function TeacherGoupe() {
       setSchedule([...schedule, response]);
     });
   };
+  pdfMake.vfs = {
+    ...pdfMake.vfs,
+    "Cairo-Regular.ttf": font,
+  };
 
+  pdfMake.fonts = {
+    Cairo: {
+      normal: "Cairo-Regular.ttf",
+      bold: "Cairo-Regular.ttf",
+    },
+  };
   useEffect(() => {
     fatchGroup();
     fetchAllTeachers();
@@ -611,7 +589,7 @@ function TeacherGoupe() {
                         {columnKey === "action" ? (
                           <div className="flex "></div>
                         ) : columnKey === "birthDay" ? (
-                          item[columnKey].split("T")[0]
+                          format(new Date(item[columnKey]), "yyyy-MM-dd")
                         ) : (
                           // getKeyValue(index, columnKey)
                           getKeyValue(item, columnKey)

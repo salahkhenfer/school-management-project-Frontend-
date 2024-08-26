@@ -3,7 +3,7 @@ import axios from "axios";
 const getAllTeachers = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/teachers/GetAllTeacher",
+      "http://servertest.eltatwir.com/api/teachers/GetAllTeacher",
       {
         withCredentials: true,
       }
@@ -19,7 +19,7 @@ const getAllTeachers = async () => {
 const addTeacherApi = async (teacher) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/teachers/AddTeacher",
+      "http://servertest.eltatwir.com/api/teachers/AddTeacher",
       teacher, // Pass the teacher object directly
 
       {
@@ -41,7 +41,7 @@ const deleteTeacherApi = async (teacherId) => {
   console.log(teacherId);
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/teachers/DeleteTeacher",
+      "http://servertest.eltatwir.com/api/teachers/DeleteTeacher",
       {
         data: { id: teacherId },
         withCredentials: true,
@@ -56,7 +56,7 @@ const deleteTeacherApi = async (teacherId) => {
 const getTeacherById = async (teacherId) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/teachers/getTeacherById`,
+      `http://servertest.eltatwir.com/api/teachers/getTeacherById`,
       {
         id: teacherId,
       },
@@ -73,7 +73,7 @@ const getTeacherById = async (teacherId) => {
 const searchTeacherApi = async (teacher) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/Teachers/searchTeachers",
+      "http://servertest.eltatwir.com/api/Teachers/searchTeachers",
       {
         fullName: teacher,
       },
@@ -92,7 +92,7 @@ const searchTeacherApi = async (teacher) => {
 const countTeachers = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/teachers/countTeachers",
+      "http://servertest.eltatwir.com/api/teachers/countTeachers",
       {
         withCredentials: true,
       }
@@ -108,7 +108,7 @@ const countTeachers = async () => {
 const getTeacherWithUser = async (id) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/teachers/getTeacherWithUser",
+      "http://servertest.eltatwir.com/api/teachers/getTeacherWithUser",
       id,
       {
         withCredentials: true,
@@ -121,11 +121,11 @@ const getTeacherWithUser = async (id) => {
   }
 };
 export {
-  getAllTeachers,
   addTeacherApi,
-  deleteTeacherApi,
-  getTeacherById,
-  searchTeacherApi,
   countTeachers,
+  deleteTeacherApi,
+  getAllTeachers,
+  getTeacherById,
   getTeacherWithUser,
+  searchTeacherApi,
 };

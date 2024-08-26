@@ -125,7 +125,7 @@ function Languages() {
         اللغات الموجودة
       </div>
       <div className="flex w-full justify-center items-center flex-wrap gap-10">
-        {Languages.map((language) => (
+        {Languages?.map((language) => (
           <SmallCard
             key={language.id}
             id={language.id}

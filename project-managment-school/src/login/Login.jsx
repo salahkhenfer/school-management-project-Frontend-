@@ -20,7 +20,11 @@ export function Login() {
     const fetchAuthStatus = async () => {
       try {
         const userData = await checkauthApi();
-        dispatch(checkauth(userData.user));
+
+        // if (!userData) {
+        //   nav("/login");
+        // }
+        // dispatch(checkauth(userData.user));
       } catch (err) {
         console.error("Error checking authentication status:", err);
       } finally {
@@ -29,7 +33,7 @@ export function Login() {
     };
 
     fetchAuthStatus();
-  }, [dispatch]);
+  }, []);
 
   const handleLogin = async () => {
     setLoading(true);

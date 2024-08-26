@@ -1,49 +1,39 @@
-import React, { useEffect, useState } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
   Button,
-  Spinner,
-  Modal,
-  ModalContent,
-  useDisclosure,
-  Pagination,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Pagination,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  getKeyValue,
+  useDisclosure,
 } from "@nextui-org/react";
+
+import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash, FaSearch } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
-import Swal from "sweetalert2";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 import { IoIosAddCircle } from "react-icons/io";
-import { useNavigate, useLocation } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import {
+  addParent,
+  checkParentApi,
+  deleteParentApi,
   getAllParents,
   searchParent,
-  deleteStudentForParent,
-  addParent as addParentApi,
-  addStudentInToParent,
-  addParent,
-  deleteParentApi,
-  checkParentApi,
 } from "../../apiCalls/parentCalls";
-import { getAllStudent, searchStudentApi } from "../../apiCalls/studentCalls";
-import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
-import { is } from "date-fns/locale";
+import { getAllStudent } from "../../apiCalls/studentCalls";
 
-pdfMake.vfs = { ...pdfFonts.pdfMake.vfs, "Cairo-Regular.ttf": font };
-pdfMake.fonts = {
-  Cairo: { normal: "Cairo-Regular.ttf", bold: "Cairo-Regular.ttf" },
-};
-
+// Rest of your component code...
 function Parents() {
   const nav = useNavigate();
   const pathname = useLocation().pathname;
@@ -59,6 +49,9 @@ function Parents() {
 
   const fetchParents = async () => {
     const response = await getAllParents();
+    if (response == []) {
+      return;
+    }
     setParents(response);
     console.log(response);
     setLoadingGroups(false);
@@ -81,82 +74,6 @@ function Parents() {
     setParents(newList);
   };
 
-  const convertTextToRtl = (text) => {
-    return text.split(" ").reverse().join("  ");
-  };
-
-  const handlePrint = () => {
-    const groupName = group.filter((item) => item.id === student.groupId);
-    if (!student) {
-      Swal.fire({
-        icon: "error",
-        title: "عذرا",
-        text: "لا يوجد معلومات لطباعة وصل الدفع",
-      });
-      return;
-    }
-
-    const docDefinition = {
-      pageSize: { width: 180, height: "auto" },
-      pageMargins: [10, 10, 10, 10],
-      content: [
-        {
-          text: convertTextToRtl("وصل دفع"),
-          style: "header",
-          alignment: "center",
-        },
-        {
-          text: convertTextToRtl(`اسم التلميذ: ${student.fullName}`),
-          style: "smallText",
-        },
-        {
-          text: convertTextToRtl(`تاريخ الميلاد: ${student.birthDay}`),
-          style: "smallText",
-        },
-        {
-          text: convertTextToRtl(`الصف: ${groupName[0]?.name}`),
-          style: "smallText",
-        },
-        {
-          text: convertTextToRtl(`السعر: ${student.price} DZD`),
-          style: "smallText",
-        },
-        {
-          text: convertTextToRtl(
-            `تاريخ الدفع: ${new Date().toLocaleDateString()}`
-          ),
-          style: "smallText",
-        },
-        {
-          text: convertTextToRtl("شكرا لتسديدك!"),
-          style: "smallText",
-          margin: [0, 10, 0, 0],
-        },
-      ],
-      styles: {
-        header: {
-          fontSize: 14,
-          bold: true,
-          alignment: "center",
-          decoration: "underline",
-        },
-        smallText: { fontSize: 8, alignment: "right", margin: [0, 2] },
-      },
-      defaultStyle: { font: "Cairo" },
-      layout: {
-        hLineColor: () => "#000000",
-        vLineColor: () => "#000000",
-        hLineWidth: () => 1,
-        vLineWidth: () => 1,
-        paddingLeft: () => 4,
-        paddingRight: () => 4,
-        paddingTop: () => 4,
-        paddingBottom: () => 4,
-      },
-    };
-
-    pdfMake.createPdf(docDefinition).open();
-  };
   const deleteParent = async (id) => {
     const response = await deleteParentApi({
       id: id,
@@ -305,13 +222,7 @@ function Parents() {
         </div>
       ) : (
         <div>
-          {parents?.length === 0 ? (
-            <div className="flex min-h-[60vh] justify-center items-center w-full h-full">
-              <div className="text-center text-lg text-gray-500">
-                لا يوجد تلاميذ
-              </div>
-            </div>
-          ) : (
+          {parents && parents.length > 0 ? (
             <Table className="min-h-[60vh]" isHeaderSticky>
               <TableHeader>
                 <TableColumn key="id">رمز الولي</TableColumn>
@@ -350,11 +261,18 @@ function Parents() {
                 )}
               </TableBody>
             </Table>
+          ) : (
+            <div className="flex min-h-[60vh] justify-center items-center w-full h-full">
+              <div className="text-center text-lg text-gray-500">
+                لا يوجد تلاميذ
+              </div>
+            </div>
           )}
+
           <div className="mt-4 flex justify-center items-center">
             <Pagination
               onChange={(page) => fetchStudentsByPage(page)}
-              total={Math.ceil(parents.length / 10)}
+              total={Math.ceil(parents?.length / 10)}
             />
           </div>
         </div>

@@ -1,65 +1,52 @@
-import React, { useEffect, useState } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
-  Select,
-  SelectItem,
-  cn,
   Button,
-  Spinner,
   Modal,
   ModalContent,
-  useDisclosure,
   Pagination,
+  Select,
+  SelectItem,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  getKeyValue,
+  useDisclosure,
 } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 
-import { Form, useLocation, useNavigate } from "react-router-dom";
-import { addGroupApi, getGroups } from "../../apiCalls/GroupsCals";
-import { ErrorMessage, Field, Formik } from "formik";
 import {
-  Input,
-  DatePicker,
   Autocomplete,
   AutocompleteItem,
-  RadioGroup,
+  DatePicker,
+  Input,
   Radio,
+  RadioGroup,
 } from "@nextui-org/react"; // Adjust imports based on your setup
-import Swal from "sweetalert2";
+import { ErrorMessage, Field, Formik } from "formik";
+import "jspdf-autotable";
+
+import { FaSearch } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
-import { getAllTeachers } from "../../apiCalls/teacherCalls";
+import { MdDelete } from "react-icons/md";
+import { Form, useLocation, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { getCourses } from "../../apiCalls/coursesCalls";
+import { getGroups } from "../../apiCalls/GroupsCals";
+import { getAllLanguages } from "../../apiCalls/languagesCalls";
 import {
   addStudent,
   deleteStudent,
   getAllStudent,
   searchStudentApi,
 } from "../../apiCalls/studentCalls";
-import { MdDelete } from "react-icons/md";
-import { FaSearch } from "react-icons/fa";
-import { getAllLanguages } from "../../apiCalls/languagesCalls";
 import Education from "../../utils/Education";
-import { getCourses } from "../../apiCalls/coursesCalls";
-import "jspdf-autotable";
-import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
 import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-
-pdfMake.vfs = {
-  ...pdfFonts.pdfMake.vfs,
-  "Cairo-Regular.ttf": font,
-};
-
-pdfMake.fonts = {
-  Cairo: {
-    normal: "Cairo-Regular.ttf",
-    bold: "Cairo-Regular.ttf",
-  },
-};
+import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
+import { format, formatDate } from "date-fns/format";
 
 function Students() {
   const nav = useNavigate();
@@ -112,19 +99,30 @@ function Students() {
   ];
   const fetchStudents = async () => {
     setLoadingGroups(true);
-    const newList = await getAllStudent(1);
-    setStudent(newList);
+    const newList = await getAllStudent();
+    console.log(newList);
+    setStudent(newList.students);
     console.log(newList);
     setLoadingGroups(false);
   };
-  function formatDate(date) {
-    if (!date || !date.year || !date.month || !date.day) return "";
-    const year = date.year;
-    const month = date.month.toString().padStart(2, "0"); // Ensure two-digit format
-    const day = date.day.toString().padStart(2, "0"); // Ensure two-digit format
-    return `${year}-${month}-${day}`;
-  }
+  // function formatDate(date) {
+  //   if (!date || !date.year || !date.month || !date.day) return "";
+  //   const year = date.year;
+  //   const month = date.month.toString().padStart(2, "0"); // Ensure two-digit format
+  //   const day = date.day.toString().padStart(2, "0"); // Ensure two-digit format
+  //   return `${year}-${month}-${day}`;
+  // }
+  pdfMake.vfs = {
+    ...pdfMake.vfs,
+    "Cairo-Regular.ttf": font,
+  };
 
+  pdfMake.fonts = {
+    Cairo: {
+      normal: "Cairo-Regular.ttf",
+      bold: "Cairo-Regular.ttf",
+    },
+  };
   const fetchLanguages = async () => {
     const newList = await getAllLanguages();
     setLanguages(newList);
@@ -366,7 +364,7 @@ function Students() {
         </div>
       ) : (
         <div>
-          {student.length === 0 ? (
+          {student?.length === 0 ? (
             <div className="flex min-h-[60vh] justify-center items-center w-full h-full">
               <div className="text-center text-lg text-gray-500">
                 لا يوجد تلاميذ
@@ -416,7 +414,7 @@ function Students() {
                             </Button>
                           </div>
                         ) : columnKey === "birthDay" ? (
-                          item[columnKey].split("T")[0]
+                          format(new Date(item[columnKey]), "yyyy-MM-dd")
                         ) : (
                           // getKeyValue(index, columnKey)
                           getKeyValue(item, columnKey)
@@ -428,9 +426,9 @@ function Students() {
               </TableBody>
             </Table>
           )}
-          {student.totalPages > 5 && (
+          {/* {student?.totalPages > 5 && (
             <Pagination
-              total={student.totalPages}
+              total={student?.totalPages}
               initialPage={1}
               onChange={(page) => {
                 // احصل على رقم الصفحة الجديد هنا
@@ -439,8 +437,8 @@ function Students() {
                 fetchStudentsByPage(page);
               }}
             />
-          )}
-          <Pagination
+          )} */}
+          {/* <Pagination
             total={33}
             initialPage={1}
             onChange={(page) => {
@@ -449,7 +447,7 @@ function Students() {
               // نفذ العملية المناسبة باستخدام رقم الصفحة الجديد، مثل تحديث البيانات من الخادم
               fetchStudentsByPage(page);
             }}
-          />
+          /> */}
         </div>
       )}
       <Modal
@@ -469,7 +467,7 @@ function Students() {
 
                   const newStudent = {
                     fullName: values.studentName,
-                    birthDay: formatDate(values.birthDay),
+                    birthDay: values.birthDay,
                     groupId: values.group.id,
                     price: values.group.price,
                   };

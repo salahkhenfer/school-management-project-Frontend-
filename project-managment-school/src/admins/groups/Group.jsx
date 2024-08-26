@@ -1,8 +1,13 @@
 import {
+  Autocomplete,
+  AutocompleteItem,
   Button,
   getKeyValue,
+  Input,
   Modal,
   ModalContent,
+  Radio,
+  RadioGroup,
   Spinner,
   Table,
   TableBody,
@@ -12,55 +17,33 @@ import {
   TableRow,
   useDisclosure,
 } from "@nextui-org/react";
-import { FaCheck, FaDownload, FaEdit, FaPrint, FaTimes } from "react-icons/fa";
-import { MdDelete, MdEdit, MdWidthFull } from "react-icons/md";
-import LineAddTime from "../../components/adminsCompnents/groups/LineAddTime";
-import { IoAdd } from "react-icons/io5";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import "jspdf-autotable";
+
 import { useEffect, useState } from "react";
+import { FaCheck, FaDownload, FaPrint, FaTimes } from "react-icons/fa";
+import { IoAdd } from "react-icons/io5";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { useLocation, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import {
-  Input,
-  DatePicker,
-  Autocomplete,
-  AutocompleteItem,
-  RadioGroup,
-  Radio,
-} from "@nextui-org/react";
+import * as Yup from "yup";
 import {
   deleteGroup,
   getGroupById,
   updateGroup,
   updateGroupStatus,
 } from "../../apiCalls/GroupsCals";
-import { useParams } from "react-router-dom";
-import "jspdf-autotable";
-import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
 import { getSchedule } from "../../apiCalls/scheduleCalls";
-import {
-  deleteStudent,
-  deleteStudentFropmGroup,
-} from "../../apiCalls/studentCalls";
+import { deleteStudentFropmGroup } from "../../apiCalls/studentCalls";
 import { getAllTeachers } from "../../apiCalls/teacherCalls";
-import { useLocation } from "react-router-dom";
-import * as Yup from "yup";
-import { id } from "date-fns/locale";
+import LineAddTime from "../../components/adminsCompnents/groups/LineAddTime";
+import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
 
-pdfMake.vfs = {
-  ...pdfFonts.pdfMake.vfs,
-  "Cairo-Regular.ttf": font,
-};
+import pdfMake from "pdfmake/build/pdfmake";
+import { format, formatDate } from "date-fns/format";
 
-pdfMake.fonts = {
-  Cairo: {
-    normal: "Cairo-Regular.ttf",
-    bold: "Cairo-Regular.ttf",
-  },
-};
-
+// Rest of your component code...
 function Group() {
   const [group, setGroup] = useState({});
   const { groupParams } = useParams();
@@ -80,7 +63,17 @@ function Group() {
     console.log(event.target.value);
     setSelectedPaymentMethod(event.target.value);
   };
+  pdfMake.vfs = {
+    ...pdfMake.vfs,
+    "Cairo-Regular.ttf": font,
+  };
 
+  pdfMake.fonts = {
+    Cairo: {
+      normal: "Cairo-Regular.ttf",
+      bold: "Cairo-Regular.ttf",
+    },
+  };
   const handelCancel = () => {
     setAddGroup(false);
   };
@@ -168,13 +161,13 @@ function Group() {
       name: values.groupName,
     };
   };
-  function formatDate(date) {
-    if (!date || !date.year || !date.month || !date.day) return "";
-    const year = date.year;
-    const month = date.month.toString().padStart(2, "0"); // Ensure two-digit format
-    const day = date.day.toString().padStart(2, "0"); // Ensure two-digit format
-    return `${year}-${month}-${day}`;
-  }
+  // function formatDate(date) {
+  //   if (!date || !date.year || !date.month || !date.day) return "";
+  //   const year = date.year;
+  //   const month = date.month.toString().padStart(2, "0"); // Ensure two-digit format
+  //   const day = date.day.toString().padStart(2, "0"); // Ensure two-digit format
+  //   return `${year}-${month}-${day}`;
+  // }
 
   const fetchAllTeachers = async () => {
     try {
@@ -233,7 +226,7 @@ function Group() {
         { text: convertTextToRtl("رقم التلميذ"), style: "tableHeader" },
       ],
       ...student.map((item, index) => [
-        { text: item.birthDay, style: "cell" },
+        { text: formatDate(item.birthDay, "yyyy-MM-dd"), style: "cell" },
         { text: convertTextToRtl(item.fullName), style: "cell" },
         { text: item.id.toString(), style: "cell" },
         { text: (index + 1).toString(), style: "cell" },
@@ -245,7 +238,7 @@ function Group() {
         { text: convertTextToRtl("قائمة الطلاب"), style: "header" },
         {
           text: convertTextToRtl(
-            `الاستاذ  : ${group?.Teachers?.slice(-1)[0]?.name}`
+            `الاستاذ  : ${group?.teachers?.slice(-1)[0]?.fullName}`
           ),
           style: {
             fontSize: 14,
@@ -427,7 +420,7 @@ function Group() {
         "رقم التلميذ": index,
         "رمز التلميذ": item.id,
         "اسم التلميذ": item.fullName,
-        "تاريخ الميلاد": item.birthDay,
+        "تاريخ الميلاد": formatDate(item.birthDay, "yyyy-MM-dd"),
       }))
     );
     const wb = XLSX.utils.book_new();
@@ -634,7 +627,7 @@ function Group() {
                           </Button>
                         </div>
                       ) : columnKey === "birthDay" ? (
-                        item[columnKey].split("T")[0]
+                        format(new Date(item[columnKey]), "yyyy-MM-dd")
                       ) : (
                         // getKeyValue(index, columnKey)
                         getKeyValue(item, columnKey)

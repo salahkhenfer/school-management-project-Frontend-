@@ -1,68 +1,24 @@
-import React, { useEffect, useState } from "react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
-  Select,
-  SelectItem,
-  cn,
   Button,
   Spinner,
-  Modal,
-  ModalContent,
-  useDisclosure,
-  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  getKeyValue,
 } from "@nextui-org/react";
-import * as Yup from "yup";
+import React, { useEffect, useState } from "react";
 
-import { Form, useLocation, useNavigate } from "react-router-dom";
-import { addGroupApi, getGroups } from "../../apiCalls/GroupsCals";
-import { ErrorMessage, Field, Formik } from "formik";
-import {
-  Input,
-  DatePicker,
-  Autocomplete,
-  AutocompleteItem,
-  RadioGroup,
-  Radio,
-} from "@nextui-org/react"; // Adjust imports based on your setup
-import Swal from "sweetalert2";
-import { IoIosAddCircle } from "react-icons/io";
-import { getAllTeachers } from "../../apiCalls/teacherCalls";
-import {
-  addStudent,
-  deleteStudent,
-  getAllStudent,
-  searchStudentApi,
-} from "../../apiCalls/studentCalls";
-import { MdDelete } from "react-icons/md";
-import { FaSearch } from "react-icons/fa";
-import { getAllLanguages } from "../../apiCalls/languagesCalls";
-import Education from "../../utils/Education";
-import { getCourses } from "../../apiCalls/coursesCalls";
 import "jspdf-autotable";
-import { font } from "../../assets/Cairo-VariableFont_slnt,wght-normal";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+
+import { IoIosAddCircle } from "react-icons/io";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { selectAuth } from "../../Redux/slices/authSlice";
-import { getParentById, getParentWithUser } from "../../apiCalls/parentCalls";
-
-pdfMake.vfs = {
-  ...pdfFonts.pdfMake.vfs,
-  "Cairo-Regular.ttf": font,
-};
-
-pdfMake.fonts = {
-  Cairo: {
-    normal: "Cairo-Regular.ttf",
-    bold: "Cairo-Regular.ttf",
-  },
-};
+import { getParentWithUser } from "../../apiCalls/parentCalls";
+import { format } from "date-fns/format";
 
 function StudentsGroups() {
   const nav = useNavigate();
@@ -152,7 +108,7 @@ function StudentsGroups() {
                             ? item.groupId
                             : "غير معروف"
                           : columnKey === "birthDay"
-                          ? item[columnKey].split("T")[0]
+                          ? format(new Date(item[columnKey]), "yyyy-MM-dd")
                           : getKeyValue(item, columnKey)}
                       </TableCell>
                     )}

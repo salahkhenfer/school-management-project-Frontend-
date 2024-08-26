@@ -3,7 +3,7 @@ import axios from "axios";
 const addSessionToGroup = async (groupId, studentIds) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/sessions/addSessionToGroup",
+      "http://servertest.eltatwir.com/api/sessions/addSessionToGroup",
       {
         groupId,
         studentIds,
@@ -22,7 +22,7 @@ const addSessionToGroup = async (groupId, studentIds) => {
 const deleteSession = async (id) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/sessions/deleteSession",
+      "http://servertest.eltatwir.com/api/sessions/deleteSession",
       {
         data: { id: id },
         withCredentials: true,
@@ -38,7 +38,7 @@ const deleteSession = async (id) => {
 const updateSession = async (session) => {
   try {
     const response = await axios.put(
-      "http://localhost:3000/api/sessions/updateSession",
+      "http://servertest.eltatwir.com/api/sessions/updateSession",
       {
         id: session.id,
         startDate: session.startDate,
@@ -64,7 +64,7 @@ const updateSession = async (session) => {
 const getSession = async (id) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/api/sessions/getSessionById`,
+      `http://servertest.eltatwir.com/api/sessions/getSessionById`,
       {
         id: id,
       },
@@ -78,4 +78,4 @@ const getSession = async (id) => {
     console.error("Failed to get session:", err);
   }
 };
-export { addSessionToGroup, deleteSession, updateSession, getSession };
+export { addSessionToGroup, deleteSession, getSession, updateSession };
