@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getTeacherById } from "../../../apiCalls/teacherCalls";
+import {
+  getTeacherById,
+  getTeacherWithUser,
+} from "../../../apiCalls/teacherCalls";
 import {
   Button,
   getKeyValue,
@@ -29,7 +32,7 @@ function FinancialTeachersInfo() {
   const [studentsPayment, setStudentsPayment] = useState([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
   const { user } = useSelector(selectAuth);
-
+  const [teacherInfo, setTeacherInfo] = useState({});
   const [completedGroupsWithPayments, setCompletedGroupsWithPayments] =
     useState([]);
 
@@ -37,10 +40,15 @@ function FinancialTeachersInfo() {
 
   const fetchFinancialTeachers = async () => {
     try {
+      const responseTeacher = await getTeacherWithUser(user);
+      setTeacherInfo(responseTeacher);
+      console.log("ééééé", responseTeacher);
       setLoadingGroups(true);
-
-      const response = await getTeacherById(FinancialTeachersParams || user.id);
-      console.log(response);
+      const response = await getTeacherById(
+        FinancialTeachersParams || responseTeacher.id
+      );
+      console.log("esdfsdf : ", response);
+      setGroups(response.groups);
 
       setFinancialTeachers(response);
 
@@ -50,7 +58,6 @@ function FinancialTeachersInfo() {
       );
 
       setCompletedGroupsWithPayments(groups);
-      setGroups(response.groups);
 
       setLoadingGroups(false);
     } catch (error) {
@@ -207,26 +214,29 @@ function FinancialTeachersInfo() {
             {(group.numberOfSessions * parseFloat(group.type)).toFixed(2)}
           </span>
         </div>
-        {group.groupPayments ? (
-          <div>
-            <Button className="mt-4" disabled auto>
-              تم دفع المبلغ
-            </Button>
-          </div>
-        ) : (
-          <div>
-            <Button
-              onClick={() => {
-                handlePayment(group.numberOfSessions * parseFloat(group.type));
-              }}
-              color="success"
-              className="mt-4 text-white"
-              auto
-            >
-              دفع المبلغ
-            </Button>
-          </div>
-        )}
+        {FinancialTeachersParams &&
+          (group.groupPayments ? (
+            <div>
+              <Button className="mt-4" disabled auto>
+                تم دفع المبلغ
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <Button
+                onClick={() => {
+                  handlePayment(
+                    group.numberOfSessions * parseFloat(group.type)
+                  );
+                }}
+                color="success"
+                className="mt-4 text-white"
+                auto
+              >
+                دفع المبلغ
+              </Button>
+            </div>
+          ))}
       </div>
     </div>
   );
