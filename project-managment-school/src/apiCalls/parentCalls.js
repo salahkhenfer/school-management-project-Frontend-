@@ -195,6 +195,24 @@ const getParentWithUser = async (user) => {
     console.error("Failed to get parent with user:", err);
   }
 };
+
+const updateParent = async (parent) => {
+  try {
+    const response = await axios.put(
+      "http://localhost:3000/api/parents/updateParent",
+      parent,
+      {
+        withCredentials: true,
+      }
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update parent:", err);
+    return false;
+  }
+};
 export {
   addParent,
   addStudentInToParent,
@@ -207,4 +225,5 @@ export {
   getParentById,
   getParentWithUser,
   searchParent,
+  updateParent,
 };

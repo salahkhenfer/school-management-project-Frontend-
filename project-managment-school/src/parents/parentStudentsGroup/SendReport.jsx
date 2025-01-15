@@ -14,7 +14,7 @@ function SendReport() {
     if (message.trim() === "") return; // Prevent sending empty content
 
     setLoading(true);
-    const res = await sendMessage(message, user.id);
+    const res = await sendMessage(message, user?.id);
 
     if (res) {
       Swal.fire({

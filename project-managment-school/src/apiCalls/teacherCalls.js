@@ -120,6 +120,22 @@ const getTeacherWithUser = async (id) => {
     console.error("Failed to get teacher:", err);
   }
 };
+
+const updateTeacher = async (teacher) => {
+  try {
+    const response = await axios.put(
+      "http://localhost:3000/api/teachers/updateTeacher",
+      teacher,
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update teacher:", err);
+  }
+};
 export {
   addTeacherApi,
   countTeachers,
@@ -128,4 +144,5 @@ export {
   getTeacherById,
   getTeacherWithUser,
   searchTeacherApi,
+  updateTeacher,
 };

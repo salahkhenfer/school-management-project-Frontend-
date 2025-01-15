@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, useParams } from "react-router-dom";
-import {
-  getStudentById,
-  searchStudentApi,
-} from "../../../apiCalls/studentCalls";
+import { useParams } from "react-router-dom";
 import {
   Button,
   Modal,
@@ -22,28 +18,110 @@ import {
   addStudentInToParent,
   deleteParentApi,
   deleteStudentFormParent,
-  deleteStudentForParent,
   getParentById,
+  updateParent,
 } from "../../../apiCalls/parentCalls";
+import { searchStudentApi } from "../../../apiCalls/studentCalls";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Swal from "sweetalert2";
-import { FiDelete } from "react-icons/fi";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
 import { BiSearch } from "react-icons/bi";
+import Swal from "sweetalert2";
+import { ErrorMessage, Formik } from "formik";
+import * as Yup from "yup";
 
 function ParentInfo() {
   const { parentParams } = useParams();
-  const { isOpen, onOpen, onClose } = useDisclosure(); // use onClose instead of onOpenChange
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [parent, setParent] = useState({});
   const [isParent, setIsParent] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    fullName: "",
+    phoneNumber: "",
+    email: "",
+    password: "",
+  });
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+
+  const validationSchema = Yup.object({
+    fullName: Yup.string().trim().required("اسم الولي مطلوب"),
+    phoneNumber: Yup.string().required("رقم الهاتف مطلوب"),
+    email: Yup.string()
+      .email("بريد إلكتروني غير صالح")
+      .required("البريد الإلكتروني مطلوب"),
+    password: Yup.string().required("كلمة المرور مطلوبة"),
+  });
 
   const fetchParent = async () => {
     const response = await getParentById(parentParams);
     setParent(response);
+  };
+
+  useEffect(() => {
+    fetchParent();
+  }, [parentParams]);
+
+  const onEditClose = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleEditSubmit = async (values) => {
+    console.log();
+
+    try {
+      const response = await updateParent({
+        id: parent.id,
+        name: editForm.fullName,
+        phone: editForm.phoneNumber,
+        email: editForm.email,
+        password: editForm.password,
+      });
+
+      if (response) {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "تم التعديل بنجاح",
+          timer: 1500,
+          confirmButtonText: "حسناً",
+        }).then(() => {
+          fetchParent();
+        });
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "حدث خطأ",
+          text: "لم يتم التعديل",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error("Error updating parent:", error);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "حدث خطأ",
+        text: "لم يتم التعديل",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
   };
   useEffect(() => {
     fetchParent();
@@ -129,7 +207,26 @@ function ParentInfo() {
     <div>
       <div className="md:flex justify-start gap-10 items-start">
         <div className="md:w-1/2">
-          <h1 className="text-2xl font-bold my-5">معلومات الولي</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold my-5">معلومات الولي</h1>
+            <Button
+              isIconOnly
+              color="primary"
+              variant="light"
+              onClick={() => {
+                setEditForm({
+                  fullName: parent.fullName,
+                  phoneNumber: parent.phoneNumber,
+                  email: parent.email,
+                  password: parent.password,
+                });
+                setIsEditModalOpen(true);
+              }}
+              className="mt-5"
+            >
+              <MdEdit className="text-xl" />
+            </Button>
+          </div>
 
           <div className="mb-4">
             <label
@@ -204,6 +301,112 @@ function ParentInfo() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
+          <Modal isOpen={isEditModalOpen} onClose={onEditClose}>
+            <ModalContent>
+              <ModalHeader className="flex flex-col gap-1">
+                تعديل معلومات الولي
+              </ModalHeader>
+              <ModalBody>
+                <Formik
+                  initialValues={editForm}
+                  onSubmit={handleEditSubmit}
+                  validationSchema={validationSchema}
+                >
+                  {({ handleSubmit }) => (
+                    <form onSubmit={handleSubmit} id="editForm">
+                      <div className="space-y-4">
+                        <div>
+                          <Input
+                            type="text"
+                            name="fullName"
+                            placeholder="اسم الولي"
+                            value={editForm.fullName}
+                            onChange={handleInputChange}
+                            required
+                          />
+                          <ErrorMessage
+                            name="fullName"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+
+                        <div>
+                          <Input
+                            type="text"
+                            name="phoneNumber"
+                            placeholder="رقم الهاتف"
+                            value={editForm.phoneNumber}
+                            onChange={handleInputChange}
+                            required
+                          />
+                          <ErrorMessage
+                            name="phoneNumber"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+
+                        <div>
+                          <Input
+                            type="email"
+                            name="email"
+                            placeholder="البريد الإلكتروني"
+                            value={editForm.email}
+                            onChange={handleInputChange}
+                            required
+                          />
+                          <ErrorMessage
+                            name="email"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+
+                        <div>
+                          <Input
+                            name="password"
+                            placeholder="كلمة المرور"
+                            type={isVisible ? "text" : "password"}
+                            value={editForm.password}
+                            onChange={handleInputChange}
+                            required
+                            endContent={
+                              <button
+                                type="button"
+                                onClick={toggleVisibility}
+                                aria-label="toggle password visibility"
+                              >
+                                {isVisible ? (
+                                  <FaEye className="text-2xl text-default-400" />
+                                ) : (
+                                  <FaEyeSlash className="text-2xl text-default-400" />
+                                )}
+                              </button>
+                            }
+                          />
+                          <ErrorMessage
+                            name="password"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
+                      </div>
+                    </form>
+                  )}
+                </Formik>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button color="danger" variant="light" onClick={onEditClose}>
+                  الغاء
+                </Button>
+                <Button color="primary" type="submit" form="editForm">
+                  حفظ
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
               <ModalHeader className="flex flex-col gap-1">
