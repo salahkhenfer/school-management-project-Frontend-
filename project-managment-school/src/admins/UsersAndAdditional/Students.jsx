@@ -150,13 +150,14 @@ function Students() {
     theYear: "",
     theModule: "",
   };
-  const validationSchema = Yup.object({
-    studentName: Yup.string().required("الاسم الكامل مطلوب"),
+  const validationSchema = Yup.object().shape({
+    studentName: Yup.string().required("اسم التلميذ مطلوب"),
     birthDay: Yup.date().required("تاريخ الميلاد مطلوب"),
-    ClassChoose: Yup.string().required("الصف مطلوب"),
-    level: Yup.string(),
-    theYear: Yup.string(),
-    theModule: Yup.string(),
+    ClassChoose: Yup.string().required("اختر نوع الفصل"),
+    group: Yup.object().shape({
+      id: Yup.number().required("اختر الفوج"),
+      price: Yup.number().required("السعر مطلوب"),
+    }),
   });
   const deleteStudentApi = async (index, id) => {
     try {
@@ -464,13 +465,21 @@ function Students() {
                 onSubmit={async (values, { resetForm }) => {
                   console.log(values);
                   // Handle form submission
-
+                  const formatDate = (dateObj) => {
+                    const day = String(dateObj.day).padStart(2, "0");
+                    const month = String(dateObj.month).padStart(2, "0");
+                    const year = dateObj.year;
+                    return `${month}-${day}-${year}`;
+                  };
                   const newStudent = {
-                    fullName: values.studentName,
-                    birthDay: values.birthDay,
+                    fullName: values.studentName.trim(),
+                    birthDay: formatDate(values.birthDay),
                     groupId: values.group.id,
                     price: values.group.price,
                   };
+
+                  console.log(newStudent);
+
                   const response = await addStudent(newStudent);
                   if (response) {
                     Swal.fire({

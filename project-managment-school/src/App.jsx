@@ -21,7 +21,7 @@ function App() {
         const userData = await checkauthApi();
         console.log(userData);
 
-        // dispatch(checkauth(userData.user));
+        dispatch(checkauth(userData.user));
       } catch (err) {
         console.error("Auth check failed:", err);
         dispatch(checkauth(null));
@@ -30,12 +30,12 @@ function App() {
       }
     };
 
-    fetchAuthStatus();
+    // fetchAuthStatus();
   }, [dispatch, navigate]);
 
-  if (loading) {
-    return <LoadingFirstPage />;
-  }
+  // if (loading) {
+  //   return <LoadingFirstPage />;
+  // }
 
   if (!user) {
     return <Navigate to="/login" />;

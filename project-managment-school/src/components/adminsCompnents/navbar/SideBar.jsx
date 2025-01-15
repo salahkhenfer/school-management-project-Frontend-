@@ -84,11 +84,13 @@ function SideBar({ isOpen, setIsOpen }) {
         </div>
       )}
 
-      <div className="flex flex-col">
-        <div className="font-bold px-2">التحكم في الموقع</div>
-        <NavLinkWrapper to="/Permission">تحديد الصلاحيات</NavLinkWrapper>
-        <NavLinkWrapper to="/additionalWebSite">إضافات الموقع</NavLinkWrapper>
-      </div>
+      {user.role === "admin" && (
+        <div className="flex flex-col">
+          <div className="font-bold px-2">التحكم في الموقع</div>
+          <NavLinkWrapper to="/Permission">تحديد الصلاحيات</NavLinkWrapper>
+          <NavLinkWrapper to="/additionalWebSite">إضافات الموقع</NavLinkWrapper>
+        </div>
+      )}
     </div>
   );
 }

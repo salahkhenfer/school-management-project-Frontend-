@@ -31,11 +31,14 @@ import ParentsPage from "./parents/ParentsPage";
 import StudentsGroups from "./parents/parentStudentsGroup/StudentsGroups";
 import SendReport from "./parents/parentStudentsGroup/SendReport";
 import MessagesAdmin from "./components/adminsCompnents/MessagesAdmin";
+import ErrorElement from "./components/ErrorElement";
+import Not_Found from "./components/Not_Found";
 
 const routes = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorElement />,
     children: [
       {
         path: "/classes/Languages",
@@ -78,11 +81,11 @@ const routes = createBrowserRouter([
         element: <LevelYears />,
       },
       {
-        path: "/classes/Levels/:levelParams/:modulePrams/:groupParams",
+        path: "/classes/Levels/:levelParams/:modulePrams/:groupsParams",
         element: <Groups />,
       },
       {
-        path: "/classes/Levels/:levelParams/:modulePrams/:groupParams",
+        path: "/classes/Levels/:levelParams/:modulePrams/:groupsParams/:groupParams",
         element: <Group />,
       },
       {
@@ -164,6 +167,7 @@ const routes = createBrowserRouter([
   {
     path: "/teachers",
     element: <TeachersPage />,
+    errorElement: <ErrorElement />,
     children: [
       {
         index: true,
@@ -187,6 +191,7 @@ const routes = createBrowserRouter([
   {
     path: "/parents",
     element: <ParentsPage />,
+    errorElement: <ErrorElement />,
     children: [
       {
         index: true,
@@ -205,6 +210,11 @@ const routes = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    errorElement: <ErrorElement />,
+  },
+  {
+    path: "*",
+    element: <Not_Found />,
   },
 ]);
 export default routes;

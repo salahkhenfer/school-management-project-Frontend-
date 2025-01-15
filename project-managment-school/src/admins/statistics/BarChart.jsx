@@ -26,7 +26,7 @@ function BarChart() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://servertest.eltatwir.com/api/students/monthly-student-count"
+          "http://localhost:3000/api/students/monthly-student-count"
         );
         const data = response.data;
 

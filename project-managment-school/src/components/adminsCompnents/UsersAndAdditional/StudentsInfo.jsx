@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, useParams } from "react-router-dom";
-import { getStudentById } from "../../../apiCalls/studentCalls";
+import { getStudentById, updateStudent } from "../../../apiCalls/studentCalls";
 import {
   Button,
   Modal,
@@ -10,8 +10,11 @@ import {
   ModalHeader,
   Input,
   useDisclosure,
+  DatePicker,
 } from "@nextui-org/react";
 import { CgAdd } from "react-icons/cg";
+import { isValid, parseISO } from "date-fns";
+
 import {
   addParent,
   addStudentInToParent,
@@ -20,7 +23,9 @@ import {
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { FiDelete } from "react-icons/fi";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdEdit } from "react-icons/md";
+import { ErrorMessage, Field, Formik } from "formik";
+import * as Yup from "yup";
 
 function StudentsInfo() {
   const [student, setStudent] = useState({});
@@ -29,14 +34,30 @@ function StudentsInfo() {
   const [parent, setParent] = useState({});
   const [isParent, setIsParent] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+
   const toggleVisibility = () => setIsVisible(!isVisible);
 
+  const validationSchema = Yup.object({
+    fullName: Yup.string().trim().required("اسم التلميذ مطلوب"),
+    birthDay: Yup.date().required("تاريخ الميلاد مطلوب"),
+  });
+
+  const initialValues = {
+    fullName: "",
+    birthDay: "",
+  };
   const fetchStudent = async () => {
     const response = await getStudentById(studentParams);
     setStudent(response);
   };
+  const parseDateString = (dateString) => {
+    return new Date(dateString); // ISO string directly converted to Date object
+  };
+
   useEffect(() => {
     fetchStudent();
+    // parseDateString(student.birthDay);
+    console.log(parseDateString(student.birthDay));
   }, [studentParams]);
 
   const addParentApi = async (parentData) => {
@@ -117,11 +138,90 @@ function StudentsInfo() {
     });
   };
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    fullName: "",
+    birthDay: new Date(student.birthDay), // Assuming `student.birthDay` is a valid date string
+  });
+
+  // Close the modal
+  const onEditClose = () => {
+    setIsEditModalOpen(false);
+  };
+
+  // Handle form submission
+  const handleEditSubmit = async (values) => {
+    console.log(values);
+
+    // Handle the form submission (e.g., update the state or make an API call)
+
+    console.log("Form submitted:", {
+      fullName: values.fullName,
+      birthDay: values.birthDay,
+    });
+    const response = await updateStudent({
+      id: student.id,
+      fullName: values.fullName,
+      birthDay: values.birthDay,
+    });
+    if (response) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "تم التعديل بنجاح",
+
+        timer: 1500,
+        confirmButtonText: "Okay",
+      }).then(() => {
+        fetchStudent();
+
+        // Refresh the list of students
+      });
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "حدث خطأ",
+        text: " لم يتم  التعديل ",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+
+    setIsEditModalOpen(false); // Close modal after submission
+  };
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
   return (
     <div>
       <div className="md:flex justify-start gap-10 items-start">
         <div className="md:w-1/2">
-          <h1 className="text-2xl font-bold my-5">معلومات التلميذ</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold my-5">معلومات التلميذ</h1>
+            <Button
+              isIconOnly
+              color="primary"
+              variant="light"
+              onClick={() => {
+                setEditForm({
+                  fullName: student.fullName,
+                  birthDay: new Date(student.birthDay),
+                });
+                setIsEditModalOpen(true);
+              }}
+              className="mt-5"
+            >
+              <MdEdit className="text-xl" />
+            </Button>
+          </div>
           <div className="h-14 px-8 py-4 my-3 rounded-lg border border-black/20">
             <div className="text-right text-[#242c31] text-base font-semibold font-['Cairo'] leading-normal">
               {student?.fullName}
@@ -133,7 +233,7 @@ function StudentsInfo() {
             </div>
           </div>
           <div className="h-14 px-8 py-4 my-3 rounded-lg border border-black/20">
-            <div className="text-right flex justify-between  gap-5 items-center  text-[#242c31] text-base font-semibold font-['Cairo'] leading-normal">
+            <div className="text-right flex justify-between gap-5 items-center text-[#242c31] text-base font-semibold font-['Cairo'] leading-normal">
               {student.parent ? (
                 <div>{student.parent.fullName}</div>
               ) : (
@@ -141,21 +241,7 @@ function StudentsInfo() {
               )}
               {student.parent && (
                 <div onClick={handleDeleteParent}>
-                  <MdDelete
-                    className="
-                  text-red-500
-                  text-2xl
-                  cursor-pointer
-                  
-                  bg-red-100
-                  p-1
-                 
-                  rounded-full
-                  w-7 
-                  h-7
-                  
-                  "
-                  />
+                  <MdDelete className="text-red-500 text-2xl cursor-pointer bg-red-100 p-1 rounded-full w-7 h-7" />
                 </div>
               )}
             </div>
@@ -166,6 +252,78 @@ function StudentsInfo() {
               <CgAdd />
             </Button>
           )}
+          {/* Edit Student Modal */}
+          <Modal isOpen={isEditModalOpen} onClose={onEditClose}>
+            <ModalContent>
+              <ModalHeader className="flex flex-col gap-1">
+                تعديل التلميذ
+              </ModalHeader>
+              <ModalBody>
+                <Formik
+                  initialValues={editForm}
+                  onSubmit={handleEditSubmit}
+                  validationSchema={validationSchema}
+                >
+                  {({ handleSubmit, setFieldValue }) => (
+                    <form onSubmit={handleSubmit} id="editForm">
+                      <Input
+                        className="my-2"
+                        type="text"
+                        name="fullName"
+                        placeholder="اسم التلميذ"
+                        value={editForm.fullName}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <div className="w-fit">
+                        <Field name="birthDay">
+                          {({ field, form }) => (
+                            <input
+                              type="date"
+                              label="تاريخ الميلاد"
+                              aria-label="تاريخ الميلاد"
+                              value={
+                                field.value
+                                  ? new Date(field.value)
+                                      .toISOString()
+                                      .split("T")[0] // Format as yyyy-MM-dd
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const selectedDate = e.target.value;
+                                if (selectedDate) {
+                                  const formattedDate = new Date(
+                                    selectedDate
+                                  ).toISOString(); // Format as ISO string
+                                  form.setFieldValue(field.name, formattedDate); // Update Formik state
+                                }
+                              }}
+                            />
+                          )}
+                        </Field>
+
+                        <ErrorMessage
+                          name="birthDay"
+                          component="div"
+                          className="text-red-500"
+                        />
+                      </div>
+                    </form>
+                  )}
+                </Formik>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button color="danger" variant="light" onClick={onEditClose}>
+                  الغاء
+                </Button>
+                <Button color="primary" type="submit" form="editForm">
+                  حفظ
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          {/* Add Parent Modal */}
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
               <ModalHeader className="flex flex-col gap-1">
@@ -190,12 +348,30 @@ function StudentsInfo() {
 
                   {isParent && (
                     <div>
-                      <Input
-                        className="my-2"
-                        type="email"
-                        name="email"
-                        placeholder="ايميل الولي"
-                      />
+                      <div className="w-fit">
+                        <Field name="birthDay">
+                          {({ field }) => (
+                            <DatePicker
+                              label="تاريخ الميلاد"
+                              aria-label=" تاريخ الميلاد"
+                              selected={field.value}
+                              onChange={(date) =>
+                                field.onChange({
+                                  target: {
+                                    name: field.name,
+                                    value: date,
+                                  },
+                                })
+                              }
+                            />
+                          )}
+                        </Field>
+                        <ErrorMessage
+                          name="birthDay"
+                          component="div"
+                          className="text-red-500"
+                        />
+                      </div>
                       <Input
                         className="my-2"
                         placeholder="كلمة السر"
@@ -223,7 +399,8 @@ function StudentsInfo() {
                       className="my-2"
                       color="primary"
                       variant="light"
-                      type="submit"
+                      type="button"
+                      onClick={() => setIsParent(!isParent)}
                     >
                       هل الولي مسجل بالفعل؟
                     </Button>

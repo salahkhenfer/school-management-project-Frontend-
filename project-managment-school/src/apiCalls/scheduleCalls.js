@@ -9,7 +9,7 @@ const getAllFreeRegiments = async ({
 }) => {
   try {
     const response = await axios.post(
-      "http://servertest.eltatwir.com/api/schedules/getAllFreeRegiments",
+      "http://localhost:3000/api/schedules/getAllFreeRegiments",
       {
         startDate,
         endDate,
@@ -45,7 +45,7 @@ const addSchedule = async (schedule) => {
     }
     if (schedule.group) {
       const response = await axios.post(
-        "http://servertest.eltatwir.com/api/schedules/addSchedule",
+        "http://localhost:3000/api/schedules/addSchedule",
         {
           regimentId: schedule.regiment,
           startTime: schedule.startTime,
@@ -69,7 +69,7 @@ const addSchedule = async (schedule) => {
 const deleteSchedule = async (id) => {
   try {
     const response = await axios.delete(
-      "http://servertest.eltatwir.com/api/schedules/deleteSchedule",
+      "http://localhost:3000/api/schedules/deleteSchedule",
 
       {
         data: { id },
@@ -85,7 +85,7 @@ const deleteSchedule = async (id) => {
 const getSchedule = async (id) => {
   try {
     const response = await axios.post(
-      `http://servertest.eltatwir.com/api/schedules/getScheduleById`,
+      `http://localhost:3000/api/schedules/getScheduleById`,
       { id },
       {
         withCredentials: true,
@@ -100,7 +100,7 @@ const getSchedule = async (id) => {
 const updateSchedule = async ({ id, startTime, endTime, day, location }) => {
   try {
     const response = await axios.put(
-      `http://servertest.eltatwir.com/api/schedules/updateSchedule`,
+      `http://localhost:3000/api/schedules/updateSchedule`,
       { id, startTime, endTime, day, location },
 
       {
@@ -116,7 +116,7 @@ const updateSchedule = async ({ id, startTime, endTime, day, location }) => {
 const getAllRegiments = async () => {
   try {
     const response = await axios.get(
-      "http://servertest.eltatwir.com/api/schedules/getAllRegiments",
+      "http://localhost:3000/api/schedules/getAllRegiments",
 
       {
         withCredentials: true,
@@ -132,7 +132,7 @@ const getAllRegiments = async () => {
 const addRegimentApi = async (regiment) => {
   try {
     const response = await axios.post(
-      "http://servertest.eltatwir.com/api/schedules/addRegiment",
+      "http://localhost:3000/api/schedules/addRegiment",
       {
         name: regiment,
       },
@@ -150,7 +150,7 @@ const addRegimentApi = async (regiment) => {
 const deleteRegimentApi = async (id) => {
   try {
     const response = await axios.delete(
-      "http://servertest.eltatwir.com/api/schedules/deleteRegiment",
+      "http://localhost:3000/api/schedules/deleteRegiment",
 
       {
         data: { id },

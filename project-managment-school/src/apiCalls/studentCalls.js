@@ -3,7 +3,7 @@ import axios from "axios";
 const deleteStudent = async (id) => {
   try {
     const response = await axios.delete(
-      "http://servertest.eltatwir.com/api/students/deleteStudent",
+      "http://localhost:3000/api/students/deleteStudent",
       {
         data: { id: id },
         withCredentials: true,
@@ -19,7 +19,7 @@ const deleteStudent = async (id) => {
 const getAllStudent = async (page) => {
   try {
     const response = await axios.post(
-      "http://servertest.eltatwir.com/api/students/getAllStudents",
+      "http://localhost:3000/api/students/getAllStudents",
 
       {
         withCredentials: true,
@@ -34,7 +34,7 @@ const getAllStudent = async (page) => {
 const getStudentById = async (id) => {
   try {
     const response = await axios.post(
-      "http://servertest.eltatwir.com/api/students/getStudentById",
+      "http://localhost:3000/api/students/getStudentById",
       {
         id: id,
       },
@@ -52,8 +52,9 @@ const getStudentById = async (id) => {
 const addStudent = async (student) => {
   try {
     const response = await axios.post(
-      "http://servertest.eltatwir.com/api/students/addStudent",
+      "http://localhost:3000/api/students/addStudent",
       student,
+
       {
         withCredentials: true,
       }
@@ -68,7 +69,7 @@ const addStudent = async (student) => {
 const searchStudentApi = async (name) => {
   try {
     const response = await axios.post(
-      "http://servertest.eltatwir.com/api/students/searchStudent",
+      "http://localhost:3000/api/students/searchStudent",
       {
         fullName: name,
       },
@@ -83,11 +84,26 @@ const searchStudentApi = async (name) => {
     console.error("Failed to search student:", err);
   }
 };
+const updateStudent = async (student) => {
+  try {
+    const response = await axios.put(
+      "http://localhost:3000/api/students/updateStudent",
+      student,
 
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    console.error("Failed to update student:", err);
+  }
+};
 const countStudents = async () => {
   try {
     const response = await axios.get(
-      "http://servertest.eltatwir.com/api/students/countStudents",
+      "http://localhost:3000/api/students/countStudents",
       {
         withCredentials: true,
       }
@@ -101,7 +117,7 @@ const countStudents = async () => {
 const deleteStudentFropmGroup = async (studentId, groupId) => {
   try {
     const response = await axios.delete(
-      "http://servertest.eltatwir.com/api/students/deleteStudentFropmGroup",
+      "http://localhost:3000/api/students/deleteStudentFropmGroup",
       {
         data: {
           studentId: studentId,
@@ -126,4 +142,5 @@ export {
   getAllStudent,
   getStudentById,
   searchStudentApi,
+  updateStudent,
 };
