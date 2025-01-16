@@ -15,21 +15,34 @@ function TeachersPage() {
   const dispatch = useDispatch();
   const nav = useNavigate();
 
-  // const fetchGroups = async () => {
-  //   try {
-  //     console.log("Fetching groups... ,", user);
-  //     const newList = await getTeacherWithUser(user); // Fetch the list of groups
-  //     console.log(newList);
-  //     if (newList) {
-  //       dispatch(checkauth(newList));
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching groups:", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchGroups();
-  // }, []);
+  const fetchGroups = async () => {
+    try {
+      console.log("Fetching groups... ,", user);
+      const newList = await getTeacherWithUser(user); // Fetch the list of groups
+      console.log(newList);
+      if (newList) {
+        dispatch(
+          checkauth({
+            id: newList.id,
+            role: "teacher",
+            phone: newList.phoneNumber,
+            email: newList.email,
+            name: newList.fullName,
+            ...newList,
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching groups:", error);
+    }
+  };
+  useEffect(() => {
+    if (!user) {
+      nav("/login");
+    } else {
+      fetchGroups();
+    }
+  }, []);
 
   return (
     <div className="font-cairo">

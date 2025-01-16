@@ -3,7 +3,7 @@ import axios from "axios";
 const deleteStudent = async (id) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/students/deleteStudent",
+      "https://servertest.eltatwir.com/api/students/deleteStudent",
       {
         data: { id: id },
         withCredentials: true,
@@ -19,7 +19,7 @@ const deleteStudent = async (id) => {
 const getAllStudent = async (page) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/getAllStudents",
+      "https://servertest.eltatwir.com/api/students/getAllStudents",
 
       {
         withCredentials: true,
@@ -34,7 +34,7 @@ const getAllStudent = async (page) => {
 const getStudentById = async (id) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/getStudentById",
+      "https://servertest.eltatwir.com/api/students/getStudentById",
       {
         id: id,
       },
@@ -52,7 +52,7 @@ const getStudentById = async (id) => {
 const addStudent = async (student) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/addStudent",
+      "https://servertest.eltatwir.com/api/students/addStudent",
       student,
 
       {
@@ -69,7 +69,7 @@ const addStudent = async (student) => {
 const searchStudentApi = async (name) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/students/searchStudent",
+      "https://servertest.eltatwir.com/api/students/searchStudent",
       {
         fullName: name,
       },
@@ -87,7 +87,7 @@ const searchStudentApi = async (name) => {
 const updateStudent = async (student) => {
   try {
     const response = await axios.put(
-      "http://localhost:3000/api/students/updateStudent",
+      "https://servertest.eltatwir.com/api/students/updateStudent",
       student,
 
       {
@@ -103,7 +103,7 @@ const updateStudent = async (student) => {
 const countStudents = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/students/countStudents",
+      "https://servertest.eltatwir.com/api/students/countStudents",
       {
         withCredentials: true,
       }
@@ -117,7 +117,7 @@ const countStudents = async () => {
 const deleteStudentFropmGroup = async (studentId, groupId) => {
   try {
     const response = await axios.delete(
-      "http://localhost:3000/api/students/deleteStudentFropmGroup",
+      "https://servertest.eltatwir.com/api/students/deleteStudentFropmGroup",
       {
         data: {
           studentId: studentId,

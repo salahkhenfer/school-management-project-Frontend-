@@ -14,8 +14,23 @@ function ParentsPage() {
   const nav = useNavigate();
   const fetchParent = async () => {
     try {
+      if (!user) return;
       const parentData = await getParentWithUser(user);
-      dispatch(checkauth(parentData));
+      if (parentData) {
+        console.log("Parent data:", parentData);
+        dispatch(
+          checkauth({
+            id: parentData.id,
+            role: "parent",
+            phone: parentData.phoneNumber,
+            email: parentData.email,
+            name: parentData.fullName,
+            ...parentData,
+          })
+        );
+      } else {
+        console.error("Parent data is null or undefined.");
+      }
     } catch (error) {
       console.error("Error fetching parent:", error);
     }
@@ -23,7 +38,7 @@ function ParentsPage() {
   const fetchAuthStatus = async () => {
     try {
       const userData = await checkauthApi();
-      dispatch(checkauth(userData.user));
+      console.log("User data:", userData);
     } catch (err) {
       dispatch(checkauth(null));
       nav("/login");
@@ -31,8 +46,13 @@ function ParentsPage() {
   };
 
   useEffect(() => {
+    if (!user) {
+      nav("/login");
+    } else {
+      fetchParent();
+    }
     // fetchParent();
-    fetchAuthStatus();
+    // fetchAuthStatus();
   }, []);
 
   return (

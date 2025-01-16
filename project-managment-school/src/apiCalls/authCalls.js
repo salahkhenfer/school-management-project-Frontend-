@@ -3,7 +3,7 @@ import axios from "axios";
 export const LoginApi = async (username, password) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/auth/login",
+      "https://servertest.eltatwir.com/api/auth/login",
       {
         username: username,
         password: password,
@@ -25,8 +25,7 @@ export const LoginApi = async (username, password) => {
 export const checkauthApi = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/api/auth/protected",
-
+      "https://servertest.eltatwir.com/api/auth/checkAuth",
       {
         withCredentials: true,
       }
@@ -41,7 +40,7 @@ export const checkauthApi = async () => {
 export const LogoutApi = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/auth/logout",
+      "https://servertest.eltatwir.com/api/auth/logout",
       {},
       {
         withCredentials: true,
@@ -56,7 +55,7 @@ export const LogoutApi = async () => {
 export const getUserByIdApi = async (id) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/auth/getUserById",
+      "https://servertest.eltatwir.com/api/auth/getUserById",
       {
         id: id,
       },

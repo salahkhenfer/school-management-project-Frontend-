@@ -31,7 +31,7 @@ function App() {
     };
 
     // fetchAuthStatus();
-  }, [dispatch, navigate]);
+  }, []);
 
   // if (loading) {
   //   return <LoadingFirstPage />;

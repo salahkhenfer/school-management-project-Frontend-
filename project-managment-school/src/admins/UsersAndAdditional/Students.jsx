@@ -161,44 +161,53 @@ function Students() {
   });
   const deleteStudentApi = async (index, id) => {
     try {
-      // Confirm deletion with the user
-      const result = await Swal.fire({
+      // Confirm deletion with the user using a more compact configuration
+      const { isConfirmed } = await Swal.fire({
         title: "هل أنت متأكد؟",
-        text: "هل تريد حقًا حذف هذا التلميذ؟ لا يمكن التراجع عن هذا الإجراء",
+        text: "هل تريد حقًا حذف هذا التلميذ؟",
         icon: "warning",
         showCancelButton: true,
+        confirmButtonText: "نعم",
+        cancelButtonText: "إلغاء",
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "نعم، قم بالحذف",
-        cancelButtonText: "إلغاء",
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+          try {
+            // Update local state immediately for perceived performance
+            setStudent((prevList) => prevList.filter((_, i) => i !== index));
+            // Make the API call
+            await deleteStudent(id);
+            return true;
+          } catch (error) {
+            Swal.showValidationMessage(`حدث خطأ: ${error}`);
+            return false;
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
       });
 
-      if (result.isConfirmed) {
-        // Proceed with deletion
-        await deleteStudent(id);
-
+      if (isConfirmed) {
+        // Show success toast instead of a full modal
         Swal.fire({
-          position: "center",
+          toast: true,
+          position: "top-end",
           icon: "success",
           title: "تم حذف التلميذ بنجاح",
           timer: 1500,
-          confirmButtonText: "Okay",
-        }).then(() => {
-          fetchStudents(); // Refresh the list of students
+          showConfirmButton: false,
         });
-
-        // Remove student from local state
-        setStudent((prevList) => prevList.filter((_, i) => i !== index));
       }
     } catch (err) {
       console.error("Failed to delete student:", err);
+      // Show error toast instead of a full modal
       Swal.fire({
-        position: "center",
+        toast: true,
+        position: "top-end",
         icon: "error",
-        title: "حدث خطأ ما، يرجى المحاولة مرة أخرى",
-        text: "هناك خطأ ما، يرجى المحاولة مرة أخرى",
-        showConfirmButton: false,
+        title: "حدث خطأ ما",
         timer: 1500,
+        showConfirmButton: false,
       });
     }
   };
