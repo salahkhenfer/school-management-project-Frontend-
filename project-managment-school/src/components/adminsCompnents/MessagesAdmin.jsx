@@ -30,16 +30,16 @@ function MessagesAdmin() {
         </div>
       ) : (
         <div className="space-y-4">
-          {messages.length === 0 ? (
+          {messages?.length === 0 ? (
             <p className="text-center text-gray-500">لا توجد رسائل</p>
           ) : (
-            messages.map((message) => (
+            messages?.map((message) => (
               <div
-                key={message._id}
+                key={message?._id}
                 className="p-4 border-b-2 border-gray-300 bg-white rounded shadow-md"
               >
                 <p className="text-sm text-gray-500 mb-2">
-                  المرسل: {message?.Sender.phone}
+                  المرسل: {message?.Sender?.phone}
                 </p>
                 <p className="text-lg font-semibold text-gray-700 mb-2">
                   {message?.content}

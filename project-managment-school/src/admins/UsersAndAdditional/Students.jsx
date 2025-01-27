@@ -174,11 +174,10 @@ function Students() {
         showLoaderOnConfirm: true,
         preConfirm: async () => {
           try {
-            // Update local state immediately for perceived performance
-            setStudent((prevList) => prevList.filter((_, i) => i !== index));
-            // Make the API call
             await deleteStudent(id);
-            return true;
+            setStudent((prev) => prev.filter((_, i) => i !== index));
+
+            fetchStudents();
           } catch (error) {
             Swal.showValidationMessage(`حدث خطأ: ${error}`);
             return false;
